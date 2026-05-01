@@ -15,7 +15,7 @@ export function Panel({ title, subtitle, icon, action, children, className = "" 
       <div className="flex items-start justify-between mb-4 gap-3">
         <div className="flex items-start gap-3 min-w-0">
           {icon && (
-            <div className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center bg-white/5 border border-white/10 text-primary">
+            <div className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center bg-foreground/5 border border-border text-primary">
               {icon}
             </div>
           )}
@@ -33,7 +33,7 @@ export function Panel({ title, subtitle, icon, action, children, className = "" 
 
 export function KeyValue({ k, v }: { k: string; v: string }) {
   return (
-    <div className="flex items-start justify-between gap-3 py-2 border-b border-white/5 last:border-0">
+    <div className="flex items-start justify-between gap-3 py-2 border-b border-border last:border-0">
       <span className="text-xs text-muted-foreground uppercase tracking-wide">{k}</span>
       <span className="text-xs text-foreground text-right font-medium max-w-[60%]">{v}</span>
     </div>

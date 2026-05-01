@@ -48,7 +48,7 @@ export function NoveltyTab({ data }: { data: AnalysisData["novelty"] }) {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {data.competitors.slice(0, topN).map((c) => (
-            <div key={c.name} className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
+            <div key={c.name} className="rounded-xl border border-border bg-foreground/[0.025] p-3">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="font-semibold text-sm">{c.name}</span>
                 <LevelBadge level={c.similarity > 70 ? "high" : c.similarity > 50 ? "medium" : "low"}>
@@ -69,11 +69,11 @@ export function NoveltyTab({ data }: { data: AnalysisData["novelty"] }) {
       <Panel title="Competitor Map" icon={<Map className="w-4 h-4" />} className="lg:col-span-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {Object.entries(data.competitorMap).map(([cat, items]) => (
-            <div key={cat} className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
+            <div key={cat} className="rounded-xl border border-border bg-foreground/[0.025] p-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-medium">{cat}</div>
               <div className="flex flex-wrap gap-1.5">
                 {items.map((it) => (
-                  <span key={it} className="text-xs px-2 py-1 rounded-md bg-white/5 border border-white/10">{it}</span>
+                  <span key={it} className="text-xs px-2 py-1 rounded-md bg-foreground/5 border border-border">{it}</span>
                 ))}
               </div>
             </div>

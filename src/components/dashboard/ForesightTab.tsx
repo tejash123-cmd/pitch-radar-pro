@@ -26,7 +26,7 @@ export function ForesightTab({ data }: { data: AnalysisData["foresight"] }) {
       <Panel title="Trend Signals" icon={<Zap className="w-4 h-4" />} className="lg:col-span-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           {data.trends.map((t) => (
-            <div key={t.name} className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
+            <div key={t.name} className="rounded-xl border border-border bg-foreground/[0.025] p-3">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="font-semibold text-sm">{t.name}</span>
                 <LevelBadge level="high">{t.momentum}</LevelBadge>

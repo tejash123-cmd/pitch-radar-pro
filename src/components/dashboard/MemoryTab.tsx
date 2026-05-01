@@ -24,7 +24,7 @@ export function MemoryTab({ data }: { data: AnalysisData["memory"] }) {
       <Panel title="Similar Startups Seen Before" subtitle="From VC memory" icon={<Users className="w-4 h-4" />} className="lg:col-span-2">
         <div className="space-y-2">
           {data.similar.map((s) => (
-            <div key={s.name} className="rounded-xl border border-white/5 bg-white/[0.02] p-3 hover:bg-white/[0.04] transition-colors">
+            <div key={s.name} className="rounded-xl border border-border bg-foreground/[0.025] p-3 hover:bg-foreground/[0.05] transition-colors">
               <div className="flex items-center justify-between gap-3 mb-1.5">
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="font-semibold text-sm text-foreground truncate">{s.name}</span>
