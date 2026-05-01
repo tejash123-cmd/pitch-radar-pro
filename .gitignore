@@ -30,3 +30,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python cache/build artifacts
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Local backend runtime/config state
+data/store.json

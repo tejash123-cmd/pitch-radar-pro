@@ -168,6 +168,11 @@ export const mockAnalysis = {
       nextStep: "Request pitch deck and customer metrics",
     },
   },
+  foresightPayload: null as null | {
+    parsed?: Record<string, unknown>;
+    literature?: Record<string, unknown>;
+    bundle?: Record<string, unknown>;
+  },
 };
 
 export type AnalysisData = typeof mockAnalysis;

@@ -57,6 +57,11 @@ export type StartupAnalysisResponse = {
   crm_record: CRMRecordResult;
   evidence: EvidenceItem[];
   limitations: string[];
+  foresight_payload?: {
+    parsed?: Record<string, unknown>;
+    literature?: Record<string, unknown>;
+    bundle?: Record<string, unknown>;
+  };
 };
 
 export type CRMCountBucket = {
@@ -122,13 +127,22 @@ export type PortfolioCompany = {
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: {
-      Accept: "application/json",
-      ...(init?.headers || {}),
-    },
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      headers: {
+        Accept: "application/json",
+        ...(init?.headers || {}),
+      },
+    });
+  } catch (error) {
+    // Surface an actionable message instead of the browser's generic "Failed to fetch".
+    throw new Error(
+      `Unable to reach backend at ${API_BASE_URL}. Start the backend server and verify VITE_API_BASE_URL is correct.`,
+      { cause: error },
+    );
+  }
 
   if (!response.ok) {
     const errorPayload = await response.json().catch(() => ({ detail: "Request failed" }));

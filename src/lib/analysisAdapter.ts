@@ -240,5 +240,7 @@ export function adaptAnalysisResponse(
     data.memory.profile.problem = inputs.notes.slice(0, 160);
   }
 
+  data.foresightPayload = response.foresight_payload || null;
+
   return data;
 }

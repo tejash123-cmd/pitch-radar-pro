@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "backend:start": "python app.py",
+    "backend:deps": "python -m pip install -r requirements.txt"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
