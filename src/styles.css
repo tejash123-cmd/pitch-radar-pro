@@ -30,116 +30,135 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-emerald: var(--emerald);
-  --color-violet: var(--violet);
-  --color-cyan: var(--cyan);
-  --color-amber: var(--amber);
-  --color-rose: var(--rose);
+  /* Function-based semantic accents */
+  --color-memory: var(--memory);          /* VC Memory AI — electric blue (also primary action) */
+  --color-novelty: var(--novelty);        /* Novelty — amber / gold */
+  --color-foresight: var(--foresight);    /* Foresight — indigo / purple */
+  --color-positive: var(--positive);      /* Positive signals — emerald */
+  --color-warning: var(--warning);        /* Warnings — orange */
+  --color-risk: var(--risk);              /* Risk — red */
+
+  /* Legacy aliases (kept so existing class names still resolve) */
+  --color-emerald: var(--positive);
+  --color-violet: var(--foresight);
+  --color-cyan: var(--memory);
+  --color-amber: var(--novelty);
+  --color-rose: var(--risk);
 
   --color-glass: var(--glass);
   --color-glass-border: var(--glass-border);
 }
 
+/* =========================================================
+   LIGHT — Clean professional fintech (soft gray-blue canvas)
+   ========================================================= */
 :root {
   --radius: 0.875rem;
 
-  /* Light theme — soft off-white with same accent palette */
-  --background: oklch(0.985 0.005 250);
-  --foreground: oklch(0.20 0.03 260);
+  --background: oklch(0.985 0.005 245);          /* near-white with cool tint */
+  --foreground: oklch(0.22 0.03 255);            /* deep navy ink */
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.20 0.03 260);
+  --card-foreground: oklch(0.22 0.03 255);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.20 0.03 260);
+  --popover-foreground: oklch(0.22 0.03 255);
 
-  --primary: oklch(0.62 0.16 158);
-  --primary-foreground: oklch(0.99 0.005 250);
+  /* Primary = electric blue (also VC Memory color) */
+  --primary: oklch(0.55 0.18 255);
+  --primary-foreground: oklch(0.99 0.005 245);
 
-  --secondary: oklch(0.94 0.01 255);
-  --secondary-foreground: oklch(0.20 0.03 260);
+  --secondary: oklch(0.95 0.01 250);
+  --secondary-foreground: oklch(0.22 0.03 255);
 
-  --muted: oklch(0.95 0.01 255);
-  --muted-foreground: oklch(0.45 0.02 258);
+  --muted: oklch(0.95 0.01 250);
+  --muted-foreground: oklch(0.42 0.02 255);
 
-  --accent: oklch(0.58 0.20 285);
-  --accent-foreground: oklch(0.99 0.005 250);
+  --accent: oklch(0.55 0.18 255);
+  --accent-foreground: oklch(0.99 0.005 245);
 
-  --destructive: oklch(0.60 0.22 25);
-  --destructive-foreground: oklch(0.99 0.005 250);
+  --destructive: oklch(0.55 0.22 27);
+  --destructive-foreground: oklch(0.99 0.005 245);
 
-  --border: oklch(0.20 0.03 260 / 10%);
-  --input: oklch(0.20 0.03 260 / 14%);
-  --ring: oklch(0.62 0.16 158);
+  --border: oklch(0.22 0.03 255 / 12%);
+  --input: oklch(0.22 0.03 255 / 16%);
+  --ring: oklch(0.55 0.18 255);
 
-  --emerald: oklch(0.62 0.16 158);
-  --violet: oklch(0.58 0.20 285);
-  --cyan: oklch(0.62 0.13 215);
-  --amber: oklch(0.70 0.16 75);
-  --rose: oklch(0.62 0.20 15);
+  /* Function-based — chosen for AA contrast on white surfaces */
+  --memory:    oklch(0.50 0.18 255);   /* electric blue */
+  --novelty:   oklch(0.58 0.14 70);    /* amber/gold (darker for contrast) */
+  --foresight: oklch(0.50 0.20 285);   /* indigo/purple */
+  --positive:  oklch(0.50 0.15 155);   /* emerald (darker green, AA) */
+  --warning:   oklch(0.58 0.18 50);    /* orange (darker for contrast) */
+  --risk:      oklch(0.55 0.22 27);    /* red */
 
-  --glass: oklch(0.20 0.03 260 / 4%);
-  --glass-border: oklch(0.20 0.03 260 / 10%);
+  --glass: oklch(1 0 0 / 70%);
+  --glass-border: oklch(0.22 0.03 255 / 10%);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.62 0.16 158 / 0.9), oklch(0.58 0.20 285 / 0.9));
-  --gradient-emerald: linear-gradient(135deg, oklch(0.62 0.16 158), oklch(0.62 0.13 215));
-  --gradient-violet: linear-gradient(135deg, oklch(0.58 0.20 285), oklch(0.62 0.20 15));
-  --gradient-bg: radial-gradient(ellipse at top, oklch(0.85 0.05 265 / 0.5), transparent 60%),
-                 radial-gradient(ellipse at bottom right, oklch(0.85 0.07 285 / 0.35), transparent 60%);
+  --gradient-hero:    linear-gradient(135deg, oklch(0.55 0.18 255 / 0.95), oklch(0.50 0.20 285 / 0.95));
+  --gradient-emerald: linear-gradient(135deg, oklch(0.55 0.18 255), oklch(0.50 0.20 285));
+  --gradient-violet:  linear-gradient(135deg, oklch(0.50 0.20 285), oklch(0.58 0.14 70));
+  --gradient-bg:      radial-gradient(ellipse at top, oklch(0.92 0.04 250 / 0.6), transparent 60%),
+                      radial-gradient(ellipse at bottom right, oklch(0.92 0.05 285 / 0.4), transparent 60%);
 
-  --shadow-glow-emerald: 0 0 40px -10px oklch(0.62 0.16 158 / 0.4);
-  --shadow-glow-violet: 0 0 40px -10px oklch(0.58 0.20 285 / 0.4);
-  --shadow-card: 0 10px 40px -15px oklch(0.20 0.03 260 / 0.15);
+  --shadow-glow-emerald: 0 0 40px -10px oklch(0.55 0.18 255 / 0.35);
+  --shadow-glow-violet:  0 0 40px -10px oklch(0.50 0.20 285 / 0.35);
+  --shadow-card:         0 10px 40px -15px oklch(0.22 0.03 255 / 0.18);
 }
 
+/* =========================================================
+   DARK — Premium fintech: deep navy + dark slate cards
+   ========================================================= */
 .dark {
-  /* Deep navy / charcoal premium VC theme */
-  --background: oklch(0.18 0.025 260);
-  --foreground: oklch(0.97 0.01 250);
+  --background: oklch(0.18 0.025 260);           /* deep navy */
+  --foreground: oklch(0.97 0.008 250);           /* soft white */
 
-  --card: oklch(0.235 0.028 262);
-  --card-foreground: oklch(0.97 0.01 250);
+  --card: oklch(0.235 0.028 262);                /* dark slate card */
+  --card-foreground: oklch(0.97 0.008 250);
 
   --popover: oklch(0.22 0.028 262);
-  --popover-foreground: oklch(0.97 0.01 250);
+  --popover-foreground: oklch(0.97 0.008 250);
 
-  --primary: oklch(0.72 0.17 158);
+  /* Primary = electric blue (brighter for dark surfaces) */
+  --primary: oklch(0.70 0.17 250);
   --primary-foreground: oklch(0.16 0.03 260);
 
   --secondary: oklch(0.30 0.035 262);
-  --secondary-foreground: oklch(0.97 0.01 250);
+  --secondary-foreground: oklch(0.97 0.008 250);
 
   --muted: oklch(0.28 0.03 262);
-  --muted-foreground: oklch(0.70 0.02 255);
+  --muted-foreground: oklch(0.72 0.02 255);
 
-  --accent: oklch(0.65 0.20 285);
-  --accent-foreground: oklch(0.97 0.01 250);
+  --accent: oklch(0.70 0.17 250);
+  --accent-foreground: oklch(0.16 0.03 260);
 
-  --destructive: oklch(0.65 0.22 25);
+  --destructive: oklch(0.68 0.22 25);
   --destructive-foreground: oklch(0.98 0.01 250);
 
-  --border: oklch(1 0 0 / 8%);
+  --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.72 0.17 158);
+  --ring: oklch(0.70 0.17 250);
 
-  --emerald: oklch(0.74 0.17 158);
-  --violet: oklch(0.68 0.20 285);
-  --cyan: oklch(0.78 0.13 215);
-  --amber: oklch(0.80 0.16 75);
-  --rose: oklch(0.70 0.20 15);
+  /* Function-based — brighter on dark to pass AA */
+  --memory:    oklch(0.72 0.16 250);   /* electric blue */
+  --novelty:   oklch(0.82 0.15 78);    /* amber / gold */
+  --foresight: oklch(0.72 0.18 290);   /* indigo / purple */
+  --positive:  oklch(0.78 0.16 158);   /* emerald */
+  --warning:   oklch(0.78 0.16 55);    /* orange */
+  --risk:      oklch(0.72 0.20 25);    /* red */
 
   --glass: oklch(1 0 0 / 4%);
   --glass-border: oklch(1 0 0 / 10%);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.74 0.17 158 / 0.9), oklch(0.68 0.20 285 / 0.9));
-  --gradient-emerald: linear-gradient(135deg, oklch(0.74 0.17 158), oklch(0.78 0.13 215));
-  --gradient-violet: linear-gradient(135deg, oklch(0.68 0.20 285), oklch(0.70 0.20 15));
-  --gradient-bg: radial-gradient(ellipse at top, oklch(0.25 0.05 265 / 0.6), transparent 60%),
-                 radial-gradient(ellipse at bottom right, oklch(0.30 0.07 285 / 0.4), transparent 60%);
+  --gradient-hero:    linear-gradient(135deg, oklch(0.70 0.17 250 / 0.9), oklch(0.72 0.18 290 / 0.9));
+  --gradient-emerald: linear-gradient(135deg, oklch(0.70 0.17 250), oklch(0.72 0.18 290));
+  --gradient-violet:  linear-gradient(135deg, oklch(0.72 0.18 290), oklch(0.82 0.15 78));
+  --gradient-bg:      radial-gradient(ellipse at top, oklch(0.25 0.05 265 / 0.6), transparent 60%),
+                      radial-gradient(ellipse at bottom right, oklch(0.30 0.07 285 / 0.4), transparent 60%);
 
-  --shadow-glow-emerald: 0 0 40px -10px oklch(0.74 0.17 158 / 0.5);
-  --shadow-glow-violet: 0 0 40px -10px oklch(0.68 0.20 285 / 0.5);
-  --shadow-card: 0 10px 40px -15px oklch(0 0 0 / 0.5);
+  --shadow-glow-emerald: 0 0 40px -10px oklch(0.70 0.17 250 / 0.5);
+  --shadow-glow-violet:  0 0 40px -10px oklch(0.72 0.18 290 / 0.5);
+  --shadow-card:         0 10px 40px -15px oklch(0 0 0 / 0.5);
 }
 
 @layer base {
@@ -177,8 +196,15 @@
     box-shadow: var(--shadow-card);
   }
 
+  /* Stronger material on dark — translucent slate sheen */
   .dark .glass-card {
     background: linear-gradient(135deg, oklch(1 0 0 / 0.04), oklch(1 0 0 / 0.02));
+  }
+
+  /* In light mode use solid white card surface for legibility */
+  :root:not(.dark) .glass-card {
+    background: var(--card);
+    border-color: oklch(0.22 0.03 255 / 8%);
   }
 
   .gradient-text {
