@@ -210,7 +210,7 @@ function Index() {
               <div className="glass-card rounded-2xl p-6">
                 <div className="flex items-start justify-between gap-4 mb-1 flex-wrap">
                   <div>
-                    <h2 className="font-semibold text-lg">Startup Call Notes</h2>
+                    <h2 className="font-semibold text-lg">Startup Notes</h2>
                     <p className="text-xs text-muted-foreground">Paste raw notes — or upload a PDF and we'll extract them.</p>
                   </div>
                   <div className="flex items-center gap-2">
