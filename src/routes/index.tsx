@@ -51,7 +51,7 @@ function Index() {
       "Met with Lena Hartmann, founder of NovaClaim AI. Berlin-based seed-stage InsurTech building AI-native claims automation for mid-market European insurers. LLM-based agentic workflows. Targeting DACH region first. Raising $3M seed. Strong technical team, ex-Allianz. Looking for product-market fit signals and customer references."
     );
     setForm({ name: "NovaClaim AI", industry: "InsurTech / AI Operations", stage: "Seed", geography: "EU (Berlin)" });
-    setTimeout(analyze, 100);
+    setTimeout(() => document.getElementById("notes-input")?.focus(), 100);
   };
 
   return (
@@ -123,10 +123,7 @@ function Index() {
                   onClick={loadDemo}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl glass text-foreground font-medium text-sm hover:bg-foreground/10 transition-colors"
                 >
-                  <Zap className="w-4 h-4" /> View Demo Analysis
-                </button>
-                <button onClick={reset} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                  Reset Demo
+                  <Zap className="w-4 h-4" /> Load Demo Input
                 </button>
               </div>
             </section>
