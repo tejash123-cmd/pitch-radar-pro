@@ -57,7 +57,7 @@ function Index() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-white/5 sticky top-0 z-20 backdrop-blur-xl bg-background/60">
+      <header className="border-b border-border sticky top-0 z-20 backdrop-blur-xl bg-background/60">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "var(--gradient-emerald)" }}>
@@ -121,7 +121,7 @@ function Index() {
                 </button>
                 <button
                   onClick={loadDemo}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl glass text-foreground font-medium text-sm hover:bg-white/10 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl glass text-foreground font-medium text-sm hover:bg-foreground/10 transition-colors"
                 >
                   <Zap className="w-4 h-4" /> View Demo Analysis
                 </button>
@@ -142,7 +142,7 @@ function Index() {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={7}
                   placeholder="Paste startup call notes here. Include founder background, startup idea, target customers, product, technology, business model, competitors, traction, and fundraising stage…"
-                  className="w-full rounded-xl bg-background/50 border border-white/10 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+                  className="w-full rounded-xl bg-background/50 border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                   {[
@@ -156,7 +156,7 @@ function Index() {
                       value={form[f.k as keyof typeof form]}
                       onChange={(e) => setForm({ ...form, [f.k]: e.target.value })}
                       placeholder={f.label}
-                      className="rounded-xl bg-background/50 border border-white/10 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      className="rounded-xl bg-background/50 border border-border px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
                     />
                   ))}
                 </div>
@@ -212,9 +212,9 @@ function Index() {
                 {/* Tabs */}
                 <div className="flex flex-wrap items-center justify-center gap-1 p-1 rounded-xl glass-card">
                   {[
-                    { k: "memory", label: "VC Memory AI", icon: Brain },
-                    { k: "novelty", label: "Novelty Market Analysis", icon: Sparkles },
-                    { k: "foresight", label: "Foresight Market Analysis", icon: TrendingUp },
+                    { k: "memory", label: "VC Memory AI", icon: Brain, color: "var(--memory)" },
+                    { k: "novelty", label: "Novelty Market Analysis", icon: Sparkles, color: "var(--novelty)" },
+                    { k: "foresight", label: "Foresight Market Analysis", icon: TrendingUp, color: "var(--foresight)" },
                   ].map((t) => {
                     const Icon = t.icon;
                     const active = tab === t.k;
@@ -223,10 +223,13 @@ function Index() {
                         key={t.k}
                         onClick={() => setTab(t.k as Tab)}
                         className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                          active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                          active
+                            ? "text-background"
+                            : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                         }`}
+                        style={active ? { background: t.color } : { color: !active ? t.color : undefined }}
                       >
-                        <Icon className="w-4 h-4" />
+                        <Icon className="w-4 h-4" style={!active ? { color: t.color } : undefined} />
                         <span className="hidden sm:inline">{t.label}</span>
                         <span className="sm:hidden">{t.label.split(" ")[0]}</span>
                       </button>
@@ -247,7 +250,7 @@ function Index() {
         )}
       </main>
 
-      <footer className="border-t border-white/5 mt-16">
+      <footer className="border-t border-border mt-16">
         <div className="max-w-[1400px] mx-auto px-6 py-5 text-center text-xs text-muted-foreground">
           AI Investment Intelligence Engine · MVP demo · All integrations simulated
         </div>

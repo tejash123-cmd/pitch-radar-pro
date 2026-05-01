@@ -26,7 +26,7 @@ export function ForesightTab({ data }: { data: AnalysisData["foresight"] }) {
       <Panel title="Trend Signals" icon={<Zap className="w-4 h-4" />} className="lg:col-span-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           {data.trends.map((t) => (
-            <div key={t.name} className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
+            <div key={t.name} className="rounded-xl border border-border bg-foreground/[0.025] p-3">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="font-semibold text-sm">{t.name}</span>
                 <LevelBadge level="high">{t.momentum}</LevelBadge>
@@ -49,16 +49,16 @@ export function ForesightTab({ data }: { data: AnalysisData["foresight"] }) {
 
       <Panel title="Scenario Analysis" icon={<GitBranch className="w-4 h-4" />} className="lg:col-span-2">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="rounded-xl p-3 border border-emerald/30 bg-emerald/5">
-            <div className="text-xs font-bold text-emerald uppercase tracking-wider mb-1.5">Best case</div>
+          <div className="rounded-xl p-3 border bg-[color-mix(in_oklab,var(--positive)_8%,transparent)] border-[color-mix(in_oklab,var(--positive)_30%,transparent)]">
+            <div className="text-xs font-bold text-[var(--positive)] uppercase tracking-wider mb-1.5">Best case</div>
             <p className="text-xs text-foreground/90">{data.scenarios.best}</p>
           </div>
-          <div className="rounded-xl p-3 border border-cyan/30 bg-cyan/5">
-            <div className="text-xs font-bold text-cyan uppercase tracking-wider mb-1.5">Base case</div>
+          <div className="rounded-xl p-3 border bg-[color-mix(in_oklab,var(--memory)_8%,transparent)] border-[color-mix(in_oklab,var(--memory)_30%,transparent)]">
+            <div className="text-xs font-bold text-[var(--memory)] uppercase tracking-wider mb-1.5">Base case</div>
             <p className="text-xs text-foreground/90">{data.scenarios.base}</p>
           </div>
-          <div className="rounded-xl p-3 border border-rose/30 bg-rose/5">
-            <div className="text-xs font-bold text-rose uppercase tracking-wider mb-1.5">Worst case</div>
+          <div className="rounded-xl p-3 border bg-[color-mix(in_oklab,var(--risk)_8%,transparent)] border-[color-mix(in_oklab,var(--risk)_30%,transparent)]">
+            <div className="text-xs font-bold text-[var(--risk)] uppercase tracking-wider mb-1.5">Worst case</div>
             <p className="text-xs text-foreground/90">{data.scenarios.worst}</p>
           </div>
         </div>
@@ -77,7 +77,7 @@ export function ForesightTab({ data }: { data: AnalysisData["foresight"] }) {
         <ul className="space-y-2">
           {data.risks.map((r, i) => (
             <li key={i} className="flex gap-2 text-sm text-foreground/90">
-              <span className="text-rose shrink-0">▸</span>
+              <span className="text-[var(--risk)] shrink-0">▸</span>
               <span>{r}</span>
             </li>
           ))}

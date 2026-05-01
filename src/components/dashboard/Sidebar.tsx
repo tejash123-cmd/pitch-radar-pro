@@ -31,7 +31,7 @@ export function AnalysisSidebar({ data }: { data: AnalysisData["inputs"] }) {
             <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1.5">Missing</div>
             <div className="flex flex-wrap gap-1.5">
               {data.confidence.missing.map((m) => (
-                <span key={m} className="text-xs px-2 py-0.5 rounded-md bg-rose/10 text-rose border border-rose/20">{m}</span>
+                <span key={m} className="text-xs px-2 py-0.5 rounded-md bg-[color-mix(in_oklab,var(--risk)_12%,transparent)] text-[var(--risk)] border border-[color-mix(in_oklab,var(--risk)_30%,transparent)]">{m}</span>
               ))}
             </div>
           </div>

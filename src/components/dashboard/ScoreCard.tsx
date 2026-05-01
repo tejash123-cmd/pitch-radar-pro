@@ -9,11 +9,16 @@ interface ScoreCardProps {
   progress?: number; // 0-100
 }
 
+// Function-based palette:
+//  emerald -> positive (Startup Fit)
+//  cyan    -> memory   (VC Memory AI — electric blue)
+//  amber   -> novelty  (gold)
+//  violet  -> foresight(indigo/purple)
 const accentMap = {
-  emerald: { color: "var(--emerald)", glow: "var(--shadow-glow-emerald)" },
-  violet: { color: "var(--violet)", glow: "var(--shadow-glow-violet)" },
-  cyan: { color: "var(--cyan)", glow: "0 0 40px -10px var(--cyan)" },
-  amber: { color: "var(--amber)", glow: "0 0 40px -10px var(--amber)" },
+  emerald: { color: "var(--positive)",  glow: "0 0 40px -10px var(--positive)" },
+  cyan:    { color: "var(--memory)",    glow: "0 0 40px -10px var(--memory)" },
+  amber:   { color: "var(--novelty)",   glow: "0 0 40px -10px var(--novelty)" },
+  violet:  { color: "var(--foresight)", glow: "0 0 40px -10px var(--foresight)" },
 };
 
 export function ScoreCard({ label, value, suffix, icon, accent = "emerald", progress }: ScoreCardProps) {

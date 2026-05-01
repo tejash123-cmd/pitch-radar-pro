@@ -4,11 +4,16 @@ interface BadgeProps {
   size?: "sm" | "md";
 }
 
+// Function-based color mapping:
+// high   -> positive (emerald)
+// medium -> warning  (orange)
+// low    -> risk     (red)
+// neutral-> muted slate
 const levelMap = {
-  high: "bg-[oklch(0.74_0.17_158/0.15)] text-[oklch(0.85_0.17_158)] border-[oklch(0.74_0.17_158/0.3)]",
-  medium: "bg-[oklch(0.80_0.16_75/0.15)] text-[oklch(0.88_0.16_75)] border-[oklch(0.80_0.16_75/0.3)]",
-  low: "bg-[oklch(0.70_0.20_15/0.15)] text-[oklch(0.82_0.20_15)] border-[oklch(0.70_0.20_15/0.3)]",
-  neutral: "bg-white/5 text-muted-foreground border-white/10",
+  high:    "bg-[color-mix(in_oklab,var(--positive)_15%,transparent)] text-[var(--positive)] border-[color-mix(in_oklab,var(--positive)_35%,transparent)]",
+  medium:  "bg-[color-mix(in_oklab,var(--warning)_15%,transparent)]  text-[var(--warning)]  border-[color-mix(in_oklab,var(--warning)_35%,transparent)]",
+  low:     "bg-[color-mix(in_oklab,var(--risk)_15%,transparent)]     text-[var(--risk)]     border-[color-mix(in_oklab,var(--risk)_35%,transparent)]",
+  neutral: "bg-muted text-muted-foreground border-border",
 };
 
 export function LevelBadge({ children, level = "neutral", size = "sm" }: BadgeProps) {
