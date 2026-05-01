@@ -164,9 +164,11 @@ export function adaptAnalysisResponse(
       ];
 
   data.novelty.competitorMap = {
-    "Internal overlap": topMatches.map((match) => match.company_name),
-    "Evidence signals": response.evidence.slice(0, 4).map((item) => item.source),
-    "Limitations": response.limitations.slice(0, 4).length ? response.limitations.slice(0, 4) : ["No explicit limitations"],
+    "Direct competitors": topMatches.map((match) => match.company_name).slice(0, 3),
+    "Indirect competitors": response.evidence.slice(0, 2).map((item) => item.source),
+    "Enterprise incumbents": response.limitations.slice(0, 2).length ? response.limitations.slice(0, 2) : ["No explicit incumbents"],
+    "Early-stage startups": [],
+    "Open-source / alternatives": [],
   };
   data.novelty.gaps = response.limitations.length
     ? response.limitations.slice(0, 5)

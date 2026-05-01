@@ -9,6 +9,8 @@ import { ForesightTab } from "@/components/dashboard/ForesightTab";
 import { useTheme } from "@/hooks/use-theme";
 import { extractPdfText } from "@/lib/pdfExtract";
 import { fitExplanation, noveltyExplanation, foresightExplanation, downloadText } from "@/lib/scoreExplanations";
+import { scoreStartup, type StartupAnalysisResponse } from "@/lib/api";
+import { adaptAnalysisResponse } from "@/lib/analysisAdapter";
 
 export const Route = createFileRoute("/")({
   component: Index,
