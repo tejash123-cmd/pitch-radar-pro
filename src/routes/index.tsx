@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Brain, Sparkles, TrendingUp, Database, Loader2, ArrowRight, RotateCcw, Zap } from "lucide-react";
+import { Brain, Sparkles, TrendingUp, Database, Loader2, ArrowRight, RotateCcw, Zap, Sun, Moon } from "lucide-react";
 import { mockAnalysis } from "@/lib/mockData";
 import { ScoreCard } from "@/components/dashboard/ScoreCard";
 import { MemoryTab } from "@/components/dashboard/MemoryTab";
 import { NoveltyTab } from "@/components/dashboard/NoveltyTab";
 import { ForesightTab } from "@/components/dashboard/ForesightTab";
 import { AnalysisSidebar } from "@/components/dashboard/Sidebar";
+import { useTheme } from "@/hooks/use-theme";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -27,6 +28,7 @@ type Tab = "memory" | "novelty" | "foresight";
 function Index() {
   const [view, setView] = useState<View>("input");
   const [tab, setTab] = useState<Tab>("memory");
+  const { theme, toggle } = useTheme();
   const [notes, setNotes] = useState("");
   const [form, setForm] = useState({ name: "", industry: "", stage: "", geography: "" });
 
@@ -66,14 +68,24 @@ function Index() {
               <div className="text-[10px] text-muted-foreground uppercase tracking-wider">VC Engine · v1</div>
             </div>
           </div>
-          {view === "dashboard" && (
+          <div className="flex items-center gap-1">
+            {view === "dashboard" && (
+              <button
+                onClick={reset}
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-foreground/5"
+              >
+                <RotateCcw className="w-3.5 h-3.5" /> Reset Demo
+              </button>
+            )}
             <button
-              onClick={reset}
-              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
+              onClick={toggle}
+              aria-label="Toggle theme"
+              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              className="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
             >
-              <RotateCcw className="w-3.5 h-3.5" /> Reset Demo
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
-          )}
+          </div>
         </div>
       </header>
 
