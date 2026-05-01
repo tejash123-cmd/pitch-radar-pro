@@ -5,7 +5,7 @@ import type { AnalysisData } from "@/lib/mockData";
 
 type ProcessedStatus = "green" | "orange" | "red";
 
-function computeStatus(data: AnalysisData["memory"], dataQuality: string): { status: ProcessedStatus; label: string; description: string } {
+function computeStatus(data: AnalysisData["memory"], dataQuality = "medium"): { status: ProcessedStatus; label: string; description: string } {
   const found = data.crm.found;
   const dq = dataQuality.toLowerCase();
   if (found && dq === "high") return { status: "green", label: "Processed", description: "Startup is in CRM with high data quality." };
@@ -19,7 +19,7 @@ const statusStyles: Record<ProcessedStatus, { dot: string; text: string; ring: s
   red:    { dot: "bg-[var(--risk)]",     text: "text-[var(--risk)]",     ring: "ring-[color-mix(in_oklab,var(--risk)_35%,transparent)]" },
 };
 
-export function MemoryTab({ data, dataQuality }: { data: AnalysisData["memory"]; dataQuality: string }) {
+export function MemoryTab({ data, dataQuality }: { data: AnalysisData["memory"]; dataQuality?: string }) {
   const status = computeStatus(data, dataQuality);
   const s = statusStyles[status.status];
 
@@ -124,6 +124,7 @@ export function MemoryTab({ data, dataQuality }: { data: AnalysisData["memory"];
           <KeyValue k="Owner" v={data.crm.owner} />
           <KeyValue k="Deal stage" v={data.crm.stage} />
           <KeyValue k="Next action" v={data.crm.nextAction} />
+          {dataQuality ? <KeyValue k="Data quality" v={dataQuality} /> : null}
         </div>
       </Panel>
     </div>

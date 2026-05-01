@@ -4,12 +4,12 @@ import { Panel, KeyValue } from "./Panel";
 import { LevelBadge } from "./Badge";
 import type { AnalysisData } from "@/lib/mockData";
 
-export function NoveltyTab({ data }: { data: AnalysisData["novelty"] }) {
+export function NoveltyTab({ data, score }: { data: AnalysisData["novelty"]; score: number }) {
   const [topN, setTopN] = useState<5 | 10 | 15>(5);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <Panel title="Novelty Score" subtitle="7.8 / 10" icon={<Sparkles className="w-4 h-4" />}>
+      <Panel title="Novelty Score" subtitle={`${score.toFixed(1)} / 10`} icon={<Sparkles className="w-4 h-4" />}>
         <div className="space-y-2">
           {data.breakdown.map((b) => (
             <div key={b.label} className="flex items-center justify-between">

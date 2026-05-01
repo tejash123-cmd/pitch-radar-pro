@@ -8,7 +8,7 @@ import { NoveltyTab } from "@/components/dashboard/NoveltyTab";
 import { ForesightTab } from "@/components/dashboard/ForesightTab";
 import { useTheme } from "@/hooks/use-theme";
 import { extractPdfText } from "@/lib/pdfExtract";
-import { fitExplanation, noveltyExplanation, foresightExplanation, fitSummary, noveltySummary, foresightSummary, downloadText } from "@/lib/scoreExplanations";
+import { fitExplanation, noveltyExplanation, foresightExplanation, downloadText } from "@/lib/scoreExplanations";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -32,34 +32,82 @@ function Index() {
   const { theme, toggle } = useTheme();
   const [notes, setNotes] = useState("");
   const [form, setForm] = useState({ name: "", industry: "", stage: "", geography: "" });
+  const [analysisData, setAnalysisData] = useState(mockAnalysis);
+  const [selectedDocument, setSelectedDocument] = useState<File | null>(null);
+  const [analysisError, setAnalysisError] = useState("");
   const [pdfStatus, setPdfStatus] = useState<{ name: string; state: "idle" | "parsing" | "done" | "error"; message?: string }>({ name: "", state: "idle" });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const data = mockAnalysis;
+  const data = analysisData;
 
   const handlePdfUpload = async (file: File) => {
     if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
       setPdfStatus({ name: file.name, state: "error", message: "Please upload a PDF file." });
       return;
     }
+    setSelectedDocument(file);
+    setAnalysisError("");
     setPdfStatus({ name: file.name, state: "parsing" });
     try {
       const text = await extractPdfText(file);
       if (!text) {
-        setPdfStatus({ name: file.name, state: "error", message: "No selectable text found (scanned PDF?)." });
+        setPdfStatus({ name: file.name, state: "done", message: "PDF attached. No selectable text found locally, but it will still be sent to the backend." });
         return;
       }
       setNotes((prev) => (prev ? `${prev}\n\n--- From ${file.name} ---\n${text}` : text));
       setPdfStatus({ name: file.name, state: "done", message: `Extracted ${text.length.toLocaleString()} characters` });
       setTimeout(() => document.getElementById("notes-input")?.focus(), 50);
     } catch (e) {
-      setPdfStatus({ name: file.name, state: "error", message: e instanceof Error ? e.message : "Failed to read PDF" });
+      setPdfStatus({
+        name: file.name,
+        state: "done",
+        message: e instanceof Error
+          ? `Local PDF extraction failed (${e.message}), but the file is still attached for backend analysis.`
+          : "Local PDF extraction failed, but the file is still attached for backend analysis.",
+      });
     }
   };
 
-  const analyze = () => {
+  const analyze = async () => {
+    if (!selectedDocument) {
+      setAnalysisError("Upload a PDF before running backend analysis.");
+      setPdfStatus({ name: "", state: "error", message: "A PDF is required for backend scoring." });
+      return;
+    }
+
+    setAnalysisError("");
     setView("loading");
-    setTimeout(() => setView("dashboard"), 2000);
+    try {
+      const formData = new FormData();
+      formData.append("supporting_document", selectedDocument);
+      if (form.name.trim()) formData.append("startup_name", form.name.trim());
+      if (form.industry.trim()) formData.append("sector", form.industry.trim());
+      if (form.geography.trim()) formData.append("country", form.geography.trim());
+      if (notes.trim()) formData.append("meeting_notes", notes.trim());
+      if (form.stage.trim() || form.geography.trim()) {
+        formData.append(
+          "description",
+          [form.stage.trim() ? `Funding stage: ${form.stage.trim()}` : "", form.geography.trim() ? `Geography: ${form.geography.trim()}` : ""]
+            .filter(Boolean)
+            .join(". "),
+        );
+      }
+
+      const result: StartupAnalysisResponse = await scoreStartup(formData);
+      setAnalysisData(
+        adaptAnalysisResponse(result, {
+          name: form.name,
+          industry: form.industry,
+          stage: form.stage,
+          geography: form.geography,
+          notes,
+        }),
+      );
+      setView("dashboard");
+    } catch (error) {
+      setAnalysisError(error instanceof Error ? error.message : "Startup analysis failed.");
+      setView("input");
+    }
   };
 
   const reset = () => {
@@ -67,6 +115,10 @@ function Index() {
     setNotes("");
     setForm({ name: "", industry: "", stage: "", geography: "" });
     setTab("memory");
+    setSelectedDocument(null);
+    setAnalysisError("");
+    setPdfStatus({ name: "", state: "idle" });
+    setAnalysisData(mockAnalysis);
   };
 
   const loadDemo = () => {
@@ -201,6 +253,11 @@ function Index() {
                     {pdfStatus.message && <span className="opacity-80">— {pdfStatus.message}</span>}
                   </div>
                 )}
+                {analysisError && (
+                  <div className="mb-3 mt-2 rounded-lg border border-[color-mix(in_oklab,var(--risk)_35%,transparent)] bg-[color-mix(in_oklab,var(--risk)_10%,transparent)] px-3 py-2 text-xs text-[var(--risk)]">
+                    {analysisError}
+                  </div>
+                )}
                 <textarea
                   id="notes-input"
                   value={notes}
@@ -333,8 +390,8 @@ function Index() {
                 </div>
 
                 {tab === "memory" && <MemoryTab data={data.memory} dataQuality={data.inputs.confidence.dataQuality} />}
-                {tab === "novelty" && <NoveltyTab data={data.novelty} />}
-                {tab === "foresight" && <ForesightTab data={data.foresight} />}
+                {tab === "novelty" && <NoveltyTab data={data.novelty} score={data.scores.novelty} />}
+                {tab === "foresight" && <ForesightTab data={data.foresight} score={data.scores.foresight} />}
               </div>
             </div>
           </div>
@@ -343,7 +400,7 @@ function Index() {
 
       <footer className="border-t border-border mt-16">
         <div className="max-w-[1400px] mx-auto px-6 py-5 text-center text-xs text-muted-foreground">
-          AI Investment Intelligence Engine · MVP demo · All integrations simulated
+          AI Investment Intelligence Engine · Frontend connected to FastAPI backend
         </div>
       </footer>
     </div>

@@ -3,10 +3,10 @@ import { Panel, KeyValue } from "./Panel";
 import { LevelBadge } from "./Badge";
 import type { AnalysisData } from "@/lib/mockData";
 
-export function ForesightTab({ data }: { data: AnalysisData["foresight"] }) {
+export function ForesightTab({ data, score }: { data: AnalysisData["foresight"]; score: number }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <Panel title="Foresight Score" subtitle="8.2 / 10" icon={<TrendingUp className="w-4 h-4" />}>
+      <Panel title="Foresight Score" subtitle={`${score.toFixed(1)} / 10`} icon={<TrendingUp className="w-4 h-4" />}>
         <div className="space-y-2">
           {data.breakdown.map((b) => (
             <div key={b.label} className="flex items-center justify-between">
