@@ -43,7 +43,7 @@ export function ScoreCard({ label, value, suffix, icon, accent = "emerald", prog
           {suffix && <div className="text-xs text-muted-foreground mt-1">{suffix}</div>}
         </div>
         {progress !== undefined && (
-          <svg width="68" height="68" className="-rotate-90">
+          <svg width="68" height="68" className="-rotate-90 text-xs">
             <circle cx="34" cy="34" r={radius} stroke="var(--border)" strokeWidth="5" fill="none" />
             <circle
               cx="34"
