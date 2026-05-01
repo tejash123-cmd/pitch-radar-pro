@@ -212,9 +212,9 @@ function Index() {
                 {/* Tabs */}
                 <div className="flex flex-wrap items-center justify-center gap-1 p-1 rounded-xl glass-card">
                   {[
-                    { k: "memory", label: "VC Memory AI", icon: Brain },
-                    { k: "novelty", label: "Novelty Market Analysis", icon: Sparkles },
-                    { k: "foresight", label: "Foresight Market Analysis", icon: TrendingUp },
+                    { k: "memory", label: "VC Memory AI", icon: Brain, color: "var(--memory)" },
+                    { k: "novelty", label: "Novelty Market Analysis", icon: Sparkles, color: "var(--novelty)" },
+                    { k: "foresight", label: "Foresight Market Analysis", icon: TrendingUp, color: "var(--foresight)" },
                   ].map((t) => {
                     const Icon = t.icon;
                     const active = tab === t.k;
@@ -223,10 +223,13 @@ function Index() {
                         key={t.k}
                         onClick={() => setTab(t.k as Tab)}
                         className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                          active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                          active
+                            ? "text-background"
+                            : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                         }`}
+                        style={active ? { background: t.color } : { color: !active ? t.color : undefined }}
                       >
-                        <Icon className="w-4 h-4" />
+                        <Icon className="w-4 h-4" style={!active ? { color: t.color } : undefined} />
                         <span className="hidden sm:inline">{t.label}</span>
                         <span className="sm:hidden">{t.label.split(" ")[0]}</span>
                       </button>
