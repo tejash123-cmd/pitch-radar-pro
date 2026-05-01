@@ -6,7 +6,7 @@ export const mockAnalysis = {
     geography: "EU (Berlin)",
   },
   scores: {
-    fit: 78,
+    fit: 7.8,
     novelty: 7.8,
     foresight: 8.2,
     crmMatches: 4,

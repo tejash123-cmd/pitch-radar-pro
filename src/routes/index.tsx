@@ -188,7 +188,7 @@ function Index() {
 
             {/* Summary cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <ScoreCard label="Startup Fit" value={`${data.scores.fit}`} suffix="/ 100" accent="emerald" progress={data.scores.fit} icon={<Sparkles className="w-4 h-4" />} />
+              <ScoreCard label="Startup Fit" value={`${data.scores.fit}`} suffix="/ 10" accent="emerald" progress={data.scores.fit * 10} icon={<Sparkles className="w-4 h-4" />} />
               <ScoreCard label="Novelty" value={`${data.scores.novelty}`} suffix="/ 10" accent="cyan" progress={data.scores.novelty * 10} icon={<Zap className="w-4 h-4" />} />
               <ScoreCard label="Foresight" value={`${data.scores.foresight}`} suffix="/ 10" accent="violet" progress={data.scores.foresight * 10} icon={<TrendingUp className="w-4 h-4" />} />
               <ScoreCard label="CRM Memory" value={`${data.scores.crmMatches}`} suffix="similar startups found" accent="amber" icon={<Database className="w-4 h-4" />} />
