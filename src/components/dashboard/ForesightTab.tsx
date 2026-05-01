@@ -112,16 +112,16 @@ export function ForesightTab({ data }: { data: AnalysisData }) {
               {scenarios.map((s, i) => (
                 <div key={i} className="p-4 rounded-xl border bg-foreground/[0.025]">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="text-sm font-semibold">{s.name}</div>
-                    <span className="text-xs px-2 py-1 rounded bg-muted text-muted-foreground">{s.probability}</span>
+                    <div className="text-sm font-semibold">{String(s.name ?? "")}</div>
+                    <span className="text-xs px-2 py-1 rounded bg-muted text-muted-foreground">{String(s.probability_class ?? s.probability ?? "")}</span>
                   </div>
-                  <div className="text-xs text-muted-foreground mb-3">{s.summary}</div>
+                  <div className="text-xs text-muted-foreground mb-3">{String(s.summary ?? "")}</div>
                   <div className="space-y-2">
                     <div>
                       <div className="text-xs uppercase tracking-wider text-muted-foreground">Drivers</div>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {(Array.isArray(s.drivers) ? s.drivers : []).map((d, j) => (
-                          <span key={j} className="text-xs px-2 py-1 rounded bg-foreground/10 text-foreground/80">{d}</span>
+                          <span key={j} className="text-xs px-2 py-1 rounded bg-foreground/10 text-foreground/80">{String(d)}</span>
                         ))}
                       </div>
                     </div>
@@ -129,7 +129,7 @@ export function ForesightTab({ data }: { data: AnalysisData }) {
                       <div className="text-xs uppercase tracking-wider text-muted-foreground">Risks</div>
                       <ul className="text-xs text-muted-foreground mt-1 space-y-1">
                         {(Array.isArray(s.impacts) ? s.impacts : Array.isArray(s.risks) ? s.risks : []).map((r, j) => (
-                          <li key={j}>• {r}</li>
+                          <li key={j}>• {String(r)}</li>
                         ))}
                       </ul>
                     </div>
@@ -151,7 +151,7 @@ export function ForesightTab({ data }: { data: AnalysisData }) {
             {(Object.keys(trajectoryStats).length > 0 || Object.keys(trajectorySynth).length > 0 || papers.length > 0) && (
               <div className="mt-6 space-y-4">
                 <h4 className="text-sm font-semibold">Technology trajectory cues</h4>
-                {trajectorySynth.current_trajectory_hypothesis && (
+                {Boolean(trajectorySynth.current_trajectory_hypothesis) && (
                   <div className="text-xs text-muted-foreground rounded-lg border p-3 bg-foreground/[0.02]">
                     {String(trajectorySynth.current_trajectory_hypothesis)}
                   </div>

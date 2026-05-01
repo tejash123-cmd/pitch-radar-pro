@@ -1,410 +1,393 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState } from "react";
-import { Brain, Sparkles, TrendingUp, Database, Loader2, ArrowRight, RotateCcw, Zap, Sun, Moon, Upload, Download, FileText } from "lucide-react";
-import { mockAnalysis } from "@/lib/mockData";
-import { ScoreCard } from "@/components/dashboard/ScoreCard";
-import { MemoryTab } from "@/components/dashboard/MemoryTab";
-import { NoveltyTab } from "@/components/dashboard/NoveltyTab";
-import { ForesightTab } from "@/components/dashboard/ForesightTab";
-import { useTheme } from "@/hooks/use-theme";
-import { extractPdfText } from "@/lib/pdfExtract";
-import { fitExplanation, noveltyExplanation, foresightExplanation, downloadText } from "@/lib/scoreExplanations";
-import { scoreStartup, type StartupAnalysisResponse } from "@/lib/api";
-import { adaptAnalysisResponse } from "@/lib/analysisAdapter";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  Brain,
+  Sparkles,
+  TrendingUp,
+  Database,
+  ArrowRight,
+  Network,
+  LineChart,
+  Telescope,
+  Upload,
+  Cpu,
+  CheckCircle2,
+  Globe2,
+  FileSearch,
+  BookOpen,
+  Search,
+  Beaker,
+  Building2,
+} from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: Landing,
   head: () => ({
     meta: [
-      { title: "AI Investment Intelligence Engine — VC Memory, Novelty & Foresight" },
+      { title: "VCForesight — AI Investment Intelligence for Venture Capital" },
       {
         name: "description",
-        content: "Turn startup notes into VC Memory, Market Novelty Analysis, and Investment Foresight. Built for venture capital teams.",
+        content:
+          "VCForesight turns startup data into actionable VC intelligence — similarity search, market fit, and technology foresight powered by real-world data.",
+      },
+      { property: "og:title", content: "VCForesight — AI Investment Intelligence for VC" },
+      {
+        property: "og:description",
+        content:
+          "Know which startup to invest in — and why — backed by real data and foresight.",
       },
     ],
   }),
 });
 
-type View = "input" | "loading" | "dashboard";
-type Tab = "memory" | "novelty" | "foresight";
-
-function Index() {
-  const [view, setView] = useState<View>("input");
-  const [tab, setTab] = useState<Tab>("memory");
-  const { theme, toggle } = useTheme();
-  const [notes, setNotes] = useState("");
-  const [form, setForm] = useState({ name: "", industry: "", stage: "", geography: "" });
-  const [analysisData, setAnalysisData] = useState(mockAnalysis);
-  const [selectedDocument, setSelectedDocument] = useState<File | null>(null);
-  const [analysisError, setAnalysisError] = useState("");
-  const [pdfStatus, setPdfStatus] = useState<{ name: string; state: "idle" | "parsing" | "done" | "error"; message?: string }>({ name: "", state: "idle" });
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const data = analysisData;
-
-  const handlePdfUpload = async (file: File) => {
-    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
-      setPdfStatus({ name: file.name, state: "error", message: "Please upload a PDF file." });
-      return;
-    }
-    setSelectedDocument(file);
-    setAnalysisError("");
-    setPdfStatus({ name: file.name, state: "parsing" });
-    try {
-      const text = await extractPdfText(file);
-      if (!text) {
-        setPdfStatus({ name: file.name, state: "done", message: "PDF attached. No selectable text found locally, but it will still be sent to the backend." });
-        return;
-      }
-      setNotes((prev) => (prev ? `${prev}\n\n--- From ${file.name} ---\n${text}` : text));
-      setPdfStatus({ name: file.name, state: "done", message: `Extracted ${text.length.toLocaleString()} characters` });
-      setTimeout(() => document.getElementById("notes-input")?.focus(), 50);
-    } catch (e) {
-      setPdfStatus({
-        name: file.name,
-        state: "done",
-        message: e instanceof Error
-          ? `Local PDF extraction failed (${e.message}), but the file is still attached for backend analysis.`
-          : "Local PDF extraction failed, but the file is still attached for backend analysis.",
-      });
-    }
-  };
-
-  const analyze = async () => {
-    if (!selectedDocument) {
-      setAnalysisError("Upload a PDF before running backend analysis.");
-      setPdfStatus({ name: "", state: "error", message: "A PDF is required for backend scoring." });
-      return;
-    }
-
-    setAnalysisError("");
-    setView("loading");
-    try {
-      const formData = new FormData();
-      formData.append("supporting_document", selectedDocument);
-      if (form.name.trim()) formData.append("startup_name", form.name.trim());
-      if (form.industry.trim()) formData.append("sector", form.industry.trim());
-      if (form.geography.trim()) formData.append("country", form.geography.trim());
-      if (notes.trim()) formData.append("meeting_notes", notes.trim());
-      if (form.stage.trim() || form.geography.trim()) {
-        formData.append(
-          "description",
-          [form.stage.trim() ? `Funding stage: ${form.stage.trim()}` : "", form.geography.trim() ? `Geography: ${form.geography.trim()}` : ""]
-            .filter(Boolean)
-            .join(". "),
-        );
-      }
-
-      const result: StartupAnalysisResponse = await scoreStartup(formData);
-      setAnalysisData(
-        adaptAnalysisResponse(result, {
-          name: form.name,
-          industry: form.industry,
-          stage: form.stage,
-          geography: form.geography,
-          notes,
-        }),
-      );
-      setView("dashboard");
-    } catch (error) {
-      setAnalysisError(error instanceof Error ? error.message : "Startup analysis failed.");
-      setView("input");
-    }
-  };
-
-  const reset = () => {
-    setView("input");
-    setNotes("");
-    setForm({ name: "", industry: "", stage: "", geography: "" });
-    setTab("memory");
-    setSelectedDocument(null);
-    setAnalysisError("");
-    setPdfStatus({ name: "", state: "idle" });
-    setAnalysisData(mockAnalysis);
-  };
-
-  const loadDemo = () => {
-    setNotes(
-      "Met with Lena Hartmann, founder of NovaClaim AI. Berlin-based seed-stage InsurTech building AI-native claims automation for mid-market European insurers. LLM-based agentic workflows. Targeting DACH region first. Raising $3M seed. Strong technical team, ex-Allianz. Looking for product-market fit signals and customer references."
-    );
-    setForm({ name: "NovaClaim AI", industry: "InsurTech / AI Operations", stage: "Seed", geography: "EU (Berlin)" });
-    setTimeout(() => document.getElementById("notes-input")?.focus(), 100);
-  };
-
+function Landing() {
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-border sticky top-0 z-20 backdrop-blur-xl bg-background/60">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "var(--gradient-emerald)" }}>
-              <Brain className="w-5 h-5 text-background" />
-            </div>
-            <div>
-              <div className="font-bold text-sm leading-tight">AI Investment Intelligence</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider">VC Engine · v1</div>
-            </div>
+    <div className="min-h-screen bg-background text-foreground overflow-hidden">
+      {/* NAV */}
+      <header className="relative z-20 max-w-7xl mx-auto flex items-center justify-between px-6 py-5">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[var(--foresight,theme(colors.violet.500))] grid place-items-center">
+            <Brain className="w-4 h-4 text-primary-foreground" />
           </div>
-          <div className="flex items-center gap-1">
-            {view === "dashboard" && (
-              <button
-                onClick={reset}
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-foreground/5"
-              >
-                <RotateCcw className="w-3.5 h-3.5" /> Reset Demo
-              </button>
-            )}
-            <button
-              onClick={toggle}
-              aria-label="Toggle theme"
-              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              className="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
-            >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-          </div>
+          <span className="font-semibold tracking-tight">VCForesight</span>
         </div>
+        <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
+          <a href="#problem" className="hover:text-foreground transition">Why</a>
+          <a href="#engine" className="hover:text-foreground transition">Data Engine</a>
+          <a href="#features" className="hover:text-foreground transition">Features</a>
+          <a href="#how" className="hover:text-foreground transition">How it works</a>
+        </nav>
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+        >
+          Open App <ArrowRight className="w-4 h-4" />
+        </Link>
       </header>
 
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        {view === "input" && (
-          <>
-            {/* Hero */}
-            <section className="text-center max-w-3xl mx-auto mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass mb-5">
-                <Sparkles className="w-3.5 h-3.5 text-primary" />
-                <span className="text-xs text-foreground/80">Built for venture capital teams</span>
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-5 leading-[1.05]">
-                <span className="gradient-text">AI Investment</span>
-                <br />
-                <span className="text-foreground">Intelligence Engine</span>
-              </h1>
-              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-                Turn startup notes into VC Memory, Market Novelty Analysis, and Investment Foresight.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-2 mb-7">
-                {["Granola Notes", "Affinity CRM", "Web Research"].map((c) => (
-                  <span key={c} className="text-xs px-3 py-1.5 rounded-full glass text-foreground/80">{c}</span>
-                ))}
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <button
-                  onClick={() => document.getElementById("notes-input")?.focus()}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-all hover:scale-[1.02]"
-                  style={{ boxShadow: "var(--shadow-glow-emerald)" }}
-                >
-                  Analyze a Startup <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={loadDemo}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl glass text-foreground font-medium text-sm hover:bg-foreground/10 transition-colors"
-                >
-                  <Zap className="w-4 h-4" /> Load Demo Input
-                </button>
-              </div>
-            </section>
-
-            {/* Input card */}
-            <section className="max-w-3xl mx-auto">
-              <div className="glass-card rounded-2xl p-6">
-                <div className="flex items-start justify-between gap-4 mb-1 flex-wrap">
-                  <div>
-                    <h2 className="font-semibold text-lg">Startup Notes</h2>
-                    <p className="text-xs text-muted-foreground">Paste raw notes — or upload a PDF and we'll extract them.</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="application/pdf,.pdf"
-                      className="hidden"
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (f) handlePdfUpload(f);
-                        e.target.value = "";
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={pdfStatus.state === "parsing"}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg glass text-foreground text-xs font-medium hover:bg-foreground/10 transition-colors disabled:opacity-60"
-                    >
-                      {pdfStatus.state === "parsing" ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Upload className="w-3.5 h-3.5" />
-                      )}
-                      {pdfStatus.state === "parsing" ? "Extracting…" : "Upload PDF"}
-                    </button>
-                  </div>
-                </div>
-                {pdfStatus.state !== "idle" && (
-                  <div
-                    className={`mb-3 mt-2 flex items-center gap-2 text-xs rounded-lg px-3 py-2 border ${
-                      pdfStatus.state === "error"
-                        ? "border-[color-mix(in_oklab,var(--risk)_35%,transparent)] text-[var(--risk)] bg-[color-mix(in_oklab,var(--risk)_10%,transparent)]"
-                        : pdfStatus.state === "done"
-                          ? "border-[color-mix(in_oklab,var(--positive)_35%,transparent)] text-[var(--positive)] bg-[color-mix(in_oklab,var(--positive)_10%,transparent)]"
-                          : "border-border text-muted-foreground bg-foreground/[0.03]"
-                    }`}
-                  >
-                    <FileText className="w-3.5 h-3.5 shrink-0" />
-                    <span className="truncate">{pdfStatus.name}</span>
-                    {pdfStatus.message && <span className="opacity-80">— {pdfStatus.message}</span>}
-                  </div>
-                )}
-                {analysisError && (
-                  <div className="mb-3 mt-2 rounded-lg border border-[color-mix(in_oklab,var(--risk)_35%,transparent)] bg-[color-mix(in_oklab,var(--risk)_10%,transparent)] px-3 py-2 text-xs text-[var(--risk)]">
-                    {analysisError}
-                  </div>
-                )}
-                <textarea
-                  id="notes-input"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={7}
-                  placeholder="Granola Notes "
-                  className="mt-3 w-full rounded-xl bg-background/50 border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
-                />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-                  {[
-                    { k: "name", label: "Startup name" },
-                    { k: "industry", label: "Industry / Sector" },
-                    { k: "stage", label: "Funding stage" },
-                    { k: "geography", label: "Geography" },
-                  ].map((f) => (
-                    <input
-                      key={f.k}
-                      value={form[f.k as keyof typeof form]}
-                      onChange={(e) => setForm({ ...form, [f.k]: e.target.value })}
-                      placeholder={f.label}
-                      className="rounded-xl bg-background/50 border border-border px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    />
-                  ))}
-                </div>
-                <button
-                  onClick={analyze}
-                  className="mt-5 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all"
-                  style={{ boxShadow: "var(--shadow-glow-emerald)" }}
-                >
-                  Analyze Startup <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </section>
-          </>
-        )}
-
-        {view === "loading" && (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="relative mb-6">
-              <div className="absolute inset-0 rounded-full blur-2xl" style={{ background: "var(--gradient-emerald)", opacity: 0.4 }} />
-              <Loader2 className="relative w-12 h-12 text-primary animate-spin" />
-            </div>
-            <p className="text-lg font-medium text-foreground mb-1">
-              Analyzing startup memory, market novelty, and future signals…
+      {/* HERO */}
+      <section className="relative">
+        <div
+          className="absolute inset-0 -z-10 opacity-70"
+          style={{
+            background:
+              "radial-gradient(60% 50% at 80% 0%, color-mix(in oklab, var(--foresight, #7c3aed) 35%, transparent), transparent 70%), radial-gradient(50% 40% at 10% 20%, color-mix(in oklab, var(--primary) 25%, transparent), transparent 70%)",
+          }}
+        />
+        <div className="max-w-7xl mx-auto px-6 pt-12 pb-24 grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-foreground/[0.03] px-3 py-1 text-xs text-muted-foreground">
+              <Sparkles className="w-3 h-3" /> AI Investment Intelligence
+            </span>
+            <h1 className="mt-5 text-5xl md:text-6xl font-bold tracking-tight leading-[1.05]">
+              VC<span className="bg-gradient-to-r from-primary to-[color-mix(in_oklab,var(--foresight,#7c3aed)_80%,white)] bg-clip-text text-transparent">Foresight</span>
+            </h1>
+            <p className="mt-4 text-xl text-foreground/80">
+              AI-powered investment intelligence for venture capital decisions.
             </p>
-            <p className="text-sm text-muted-foreground">Cross-referencing CRM, research, and trend data</p>
-          </div>
-        )}
-
-        {view === "dashboard" && (
-          <div className="space-y-6">
-            {/* Title */}
-            <div className="flex items-end justify-between flex-wrap gap-3">
-              <div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Analysis Report</div>
-                <h2 className="text-2xl sm:text-3xl font-bold">{data.startup.name}</h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {data.startup.industry} · {data.startup.stage} · {data.startup.geography}
-                </p>
-              </div>
-            </div>
-
-            {/* Summary cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start">
-              <ScoreCard
-                label="Startup Fit"
-                value={`${data.scores.fit}`}
-                suffix="/ 10"
-                accent="emerald"
-                progress={data.scores.fit * 10}
-                icon={<Sparkles className="w-4 h-4" />}
-                reasoning="Hover to see full reasoning"
-                reasoningFull={fitExplanation(data)}
-                onDownloadReasoning={() => downloadText(`${data.startup.name}-fit-score.txt`, fitExplanation(data))}
-              />
-              <ScoreCard
-                label="Novelty"
-                value={`${data.scores.novelty}`}
-                suffix="/ 10"
-                accent="cyan"
-                progress={data.scores.novelty * 10}
-                icon={<Zap className="w-4 h-4" />}
-                reasoning="Hover to see full reasoning"
-                reasoningFull={noveltyExplanation(data)}
-                onDownloadReasoning={() => downloadText(`${data.startup.name}-novelty-score.txt`, noveltyExplanation(data))}
-              />
-              <ScoreCard
-                label="Foresight"
-                value={`${data.scores.foresight}`}
-                suffix="/ 10"
-                accent="violet"
-                progress={data.scores.foresight * 10}
-                icon={<TrendingUp className="w-4 h-4" />}
-                reasoning="Hover to see full reasoning"
-                reasoningFull={foresightExplanation(data)}
-                onDownloadReasoning={() => downloadText(`${data.startup.name}-foresight-score.txt`, foresightExplanation(data))}
-              />
-              <ScoreCard label="CRM Memory" value={`${data.scores.crmMatches}`} suffix="similar startups found" accent="amber" icon={<Database className="w-4 h-4" />} />
-            </div>
-
-            {/* Main content */}
-            <div className="space-y-4">
-              <div className="space-y-4">
-                {/* Tabs */}
-                <div className="flex flex-wrap items-center justify-center gap-1 p-1 rounded-xl glass-card">
-                  {[
-                    { k: "memory", label: "VC Memory AI", icon: Brain, color: "var(--memory)" },
-                    { k: "novelty", label: "Novelty Market Analysis", icon: Sparkles, color: "var(--novelty)" },
-                    { k: "foresight", label: "Foresight Market Analysis", icon: TrendingUp, color: "var(--foresight)" },
-                  ].map((t) => {
-                    const Icon = t.icon;
-                    const active = tab === t.k;
-                    return (
-                      <button
-                        key={t.k}
-                        onClick={() => setTab(t.k as Tab)}
-                        className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                          active
-                            ? "text-background"
-                            : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
-                        }`}
-                        style={active ? { background: t.color } : { color: !active ? t.color : undefined }}
-                      >
-                        <Icon className="w-4 h-4" style={!active ? { color: t.color } : undefined} />
-                        <span className="hidden sm:inline">{t.label}</span>
-                        <span className="sm:hidden">{t.label.split(" ")[0]}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {tab === "memory" && <MemoryTab data={data.memory} dataQuality={data.inputs.confidence.dataQuality} />}
-                {tab === "novelty" && <NoveltyTab data={data.novelty} score={data.scores.novelty} />}
-                {tab === "foresight" && <ForesightTab data={data} />}
-              </div>
+            <p className="mt-3 text-base text-muted-foreground max-w-xl">
+              Know which startup to invest in — and why — backed by real data &amp; foresight.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-3 text-sm font-medium hover:opacity-90 transition"
+              >
+                Get Started <ArrowRight className="w-4 h-4" />
+              </Link>
+              <a
+                href="#how"
+                className="inline-flex items-center gap-2 rounded-xl border border-border px-5 py-3 text-sm font-medium hover:bg-foreground/5 transition"
+              >
+                See Demo
+              </a>
             </div>
           </div>
-        )}
-      </main>
 
-      <footer className="border-t border-border mt-16">
-        <div className="max-w-[1400px] mx-auto px-6 py-5 text-center text-xs text-muted-foreground">
-          AI Investment Intelligence Engine · Frontend connected to FastAPI backend
+          {/* Hero Graphic */}
+          <HeroGraphic />
+        </div>
+      </section>
+
+      {/* PROBLEM */}
+      <section id="problem" className="max-w-6xl mx-auto px-6 py-20 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+          Which startup should I invest in — and why?
+        </h2>
+        <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+          VCs evaluate hundreds of startups, but lack structured memory, real-time data, and predictive insights.
+          VCForesight transforms fragmented information into actionable intelligence.
+        </p>
+        <div className="mt-10 grid md:grid-cols-3 gap-4">
+          {[
+            { icon: Building2, title: "Too many startups, too little clarity", desc: "Pipeline overload buries the signal." },
+            { icon: Brain, title: "Decisions rely on memory & intuition", desc: "Tribal knowledge doesn't scale." },
+            { icon: Telescope, title: "Limited visibility into future potential", desc: "Markets move faster than spreadsheets." },
+          ].map((c) => (
+            <div key={c.title} className="rounded-2xl border border-border bg-foreground/[0.025] p-6 text-left hover:border-primary/40 transition">
+              <c.icon className="w-6 h-6 text-primary mb-3" />
+              <div className="font-semibold">{c.title}</div>
+              <div className="text-sm text-muted-foreground mt-1">{c.desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* DATA ENGINE */}
+      <section id="engine" className="relative py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">Real Data Engine</span>
+            <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">
+              Powered by global research, economic & innovation data
+            </h2>
+            <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
+              VCForesight integrates global economic, research, web, and innovation data to generate deep investment insights.
+            </p>
+          </div>
+          <DataEngineGraphic />
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section id="features" className="max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Three engines. One verdict.</h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-5">
+          <FeatureCard
+            icon={Network}
+            tone="cyan"
+            title="Similarity Startup Engine"
+            desc="Compare any startup with similar companies across your VC database and the global ecosystem."
+            bullets={["Competitor mapping", "Differentiation insights", "Pattern recognition"]}
+          />
+          <FeatureCard
+            icon={LineChart}
+            tone="amber"
+            title="Market Analytics"
+            desc="Understand if the startup actually fits the market."
+            bullets={["Market demand signals", "Customer segments", "Industry growth & risk"]}
+          />
+          <FeatureCard
+            icon={Telescope}
+            tone="violet"
+            title="Technology Foresight"
+            desc="Predict whether the startup aligns with future tech trends."
+            bullets={["Emerging technologies", "Research & patent momentum", "Long-term viability score"]}
+          />
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section id="how" className="max-w-6xl mx-auto px-6 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">How it works</h2>
+        </div>
+        <div className="grid md:grid-cols-4 gap-4">
+          {[
+            { icon: Upload, title: "Upload startup", desc: "Drop notes, decks, or connect your CRM." },
+            { icon: Cpu, title: "AI analyzes", desc: "Multi-source data fused into one model." },
+            { icon: Sparkles, title: "Generate insights", desc: "Market fit, foresight, and similar startups." },
+            { icon: CheckCircle2, title: "Decide with confidence", desc: "A defensible thesis in minutes." },
+          ].map((s, i) => (
+            <div key={s.title} className="relative rounded-2xl border border-border bg-foreground/[0.025] p-5">
+              <div className="text-xs text-muted-foreground">Step {i + 1}</div>
+              <s.icon className="w-6 h-6 text-primary my-3" />
+              <div className="font-semibold">{s.title}</div>
+              <div className="text-sm text-muted-foreground mt-1">{s.desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-5xl mx-auto px-6 py-24 text-center">
+        <div
+          className="rounded-3xl border border-border p-12"
+          style={{
+            background:
+              "linear-gradient(135deg, color-mix(in oklab, var(--primary) 18%, transparent), color-mix(in oklab, var(--foresight, #7c3aed) 18%, transparent))",
+          }}
+        >
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+            Stop guessing. Start investing with foresight.
+          </h2>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-6 py-3 text-sm font-semibold hover:opacity-90 transition"
+            >
+              Request Demo <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-background/50 px-6 py-3 text-sm font-semibold hover:bg-foreground/5 transition"
+            >
+              Join Beta
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-border">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
+          <div>© {new Date().getFullYear()} VCForesight</div>
+          <div>AI investment intelligence for venture capital</div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function FeatureCard({
+  icon: Icon,
+  title,
+  desc,
+  bullets,
+  tone,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  desc: string;
+  bullets: string[];
+  tone: "cyan" | "amber" | "violet";
+}) {
+  const toneVar =
+    tone === "cyan" ? "var(--memory, #06b6d4)" : tone === "amber" ? "var(--novelty, #f59e0b)" : "var(--foresight, #7c3aed)";
+  return (
+    <div className="group relative rounded-2xl border border-border bg-foreground/[0.025] p-6 overflow-hidden hover:border-foreground/20 transition">
+      <div
+        className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl opacity-30 group-hover:opacity-60 transition"
+        style={{ background: toneVar }}
+      />
+      <div
+        className="w-10 h-10 rounded-xl grid place-items-center mb-4"
+        style={{ background: `color-mix(in oklab, ${toneVar} 18%, transparent)`, color: toneVar }}
+      >
+        <Icon className="w-5 h-5" />
+      </div>
+      <div className="font-semibold text-lg">{title}</div>
+      <div className="text-sm text-muted-foreground mt-1">{desc}</div>
+      <ul className="mt-4 space-y-2">
+        {bullets.map((b) => (
+          <li key={b} className="flex items-center gap-2 text-sm">
+            <CheckCircle2 className="w-4 h-4" style={{ color: toneVar }} />
+            {b}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function HeroGraphic() {
+  // Animated network: central core + orbiting nodes with floating insight chips
+  return (
+    <div className="relative aspect-square max-w-[520px] mx-auto w-full">
+      <div
+        className="absolute inset-8 rounded-full blur-3xl opacity-40"
+        style={{ background: "radial-gradient(circle, var(--primary), transparent 60%)" }}
+      />
+      <svg viewBox="0 0 400 400" className="absolute inset-0 w-full h-full">
+        <defs>
+          <radialGradient id="core" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id="line" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.7" />
+            <stop offset="100%" stopColor="var(--foresight, #7c3aed)" stopOpacity="0.2" />
+          </linearGradient>
+        </defs>
+        {[
+          [80, 80], [320, 90], [340, 240], [70, 300], [200, 60], [60, 200], [330, 350], [200, 350],
+        ].map(([x, y], i) => (
+          <g key={i}>
+            <line x1="200" y1="200" x2={x} y2={y} stroke="url(#line)" strokeWidth="1" />
+            <circle cx={x} cy={y} r="4" fill="var(--foresight, #7c3aed)">
+              <animate attributeName="opacity" values="0.4;1;0.4" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
+            </circle>
+          </g>
+        ))}
+        <circle cx="200" cy="200" r="80" fill="url(#core)" />
+        <circle cx="200" cy="200" r="22" fill="var(--primary)" />
+      </svg>
+
+      {/* Floating chips */}
+      <div className="absolute top-6 right-2 rounded-xl border border-border bg-background/80 backdrop-blur px-3 py-2 text-xs shadow-lg">
+        <div className="text-muted-foreground">Market Fit</div>
+        <div className="font-semibold text-emerald-500">82%</div>
+      </div>
+      <div className="absolute bottom-10 left-0 rounded-xl border border-border bg-background/80 backdrop-blur px-3 py-2 text-xs shadow-lg">
+        <div className="text-muted-foreground">Tech Longevity</div>
+        <div className="font-semibold" style={{ color: "var(--foresight, #7c3aed)" }}>High</div>
+      </div>
+      <div className="absolute top-1/2 -right-2 rounded-xl border border-border bg-background/80 backdrop-blur px-3 py-2 text-xs shadow-lg">
+        <div className="text-muted-foreground">Novelty</div>
+        <div className="font-semibold" style={{ color: "var(--novelty, #f59e0b)" }}>+34%</div>
+      </div>
+    </div>
+  );
+}
+
+function DataEngineGraphic() {
+  const sources = [
+    { icon: Globe2, label: "World Bank Data" },
+    { icon: BookOpen, label: "OpenAlex" },
+    { icon: Search, label: "DuckDuckGo" },
+    { icon: FileSearch, label: "Website Fetcher" },
+    { icon: Beaker, label: "Google Patents" },
+    { icon: Database, label: "Semantic Scholar" },
+    { icon: TrendingUp, label: "arXiv" },
+  ];
+  return (
+    <div className="relative">
+      <div className="grid lg:grid-cols-[1fr_auto_1fr] gap-8 items-center">
+        <div className="grid grid-cols-2 gap-3">
+          {sources.slice(0, 4).map((s) => (
+            <SourceChip key={s.label} icon={s.icon} label={s.label} />
+          ))}
+        </div>
+        <div className="relative grid place-items-center">
+          <div
+            className="w-44 h-44 rounded-full grid place-items-center border border-border relative"
+            style={{
+              background:
+                "radial-gradient(circle, color-mix(in oklab, var(--primary) 30%, transparent), transparent 70%)",
+            }}
+          >
+            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-primary to-[color-mix(in_oklab,var(--foresight,#7c3aed)_70%,black)] grid place-items-center text-primary-foreground shadow-2xl">
+              <div className="text-center">
+                <Brain className="w-7 h-7 mx-auto" />
+                <div className="text-[10px] uppercase tracking-widest mt-1 opacity-90">Real Data Core</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {sources.slice(4).map((s) => (
+            <SourceChip key={s.label} icon={s.icon} label={s.label} />
+          ))}
+        </div>
+      </div>
+      <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+        {["Economic Indicators", "Research Trends", "Startup Signals", "Technology Evolution"].map((t) => (
+          <div key={t} className="rounded-xl border border-border bg-foreground/[0.025] py-2 text-xs text-muted-foreground">
+            {t}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SourceChip({ icon: Icon, label }: { icon: React.ComponentType<{ className?: string }>; label: string }) {
+  return (
+    <div className="flex items-center gap-2 rounded-xl border border-border bg-foreground/[0.025] px-3 py-2 hover:border-primary/40 transition">
+      <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary grid place-items-center">
+        <Icon className="w-4 h-4" />
+      </div>
+      <span className="text-sm">{label}</span>
     </div>
   );
 }
