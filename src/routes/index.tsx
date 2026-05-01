@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Brain, Sparkles, TrendingUp, Database, Loader2, ArrowRight, RotateCcw, Zap, Sun, Moon } from "lucide-react";
+import { useRef, useState } from "react";
+import { Brain, Sparkles, TrendingUp, Database, Loader2, ArrowRight, RotateCcw, Zap, Sun, Moon, Upload, Download, FileText } from "lucide-react";
 import { mockAnalysis } from "@/lib/mockData";
 import { ScoreCard } from "@/components/dashboard/ScoreCard";
 import { MemoryTab } from "@/components/dashboard/MemoryTab";
 import { NoveltyTab } from "@/components/dashboard/NoveltyTab";
 import { ForesightTab } from "@/components/dashboard/ForesightTab";
 import { useTheme } from "@/hooks/use-theme";
+import { extractPdfText } from "@/lib/pdfExtract";
+import { fitExplanation, noveltyExplanation, foresightExplanation, downloadText } from "@/lib/scoreExplanations";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -30,8 +32,30 @@ function Index() {
   const { theme, toggle } = useTheme();
   const [notes, setNotes] = useState("");
   const [form, setForm] = useState({ name: "", industry: "", stage: "", geography: "" });
+  const [pdfStatus, setPdfStatus] = useState<{ name: string; state: "idle" | "parsing" | "done" | "error"; message?: string }>({ name: "", state: "idle" });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const data = mockAnalysis;
+
+  const handlePdfUpload = async (file: File) => {
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      setPdfStatus({ name: file.name, state: "error", message: "Please upload a PDF file." });
+      return;
+    }
+    setPdfStatus({ name: file.name, state: "parsing" });
+    try {
+      const text = await extractPdfText(file);
+      if (!text) {
+        setPdfStatus({ name: file.name, state: "error", message: "No selectable text found (scanned PDF?)." });
+        return;
+      }
+      setNotes((prev) => (prev ? `${prev}\n\n--- From ${file.name} ---\n${text}` : text));
+      setPdfStatus({ name: file.name, state: "done", message: `Extracted ${text.length.toLocaleString()} characters` });
+      setTimeout(() => document.getElementById("notes-input")?.focus(), 50);
+    } catch (e) {
+      setPdfStatus({ name: file.name, state: "error", message: e instanceof Error ? e.message : "Failed to read PDF" });
+    }
+  };
 
   const analyze = () => {
     setView("loading");
@@ -130,15 +154,60 @@ function Index() {
             {/* Input card */}
             <section className="max-w-3xl mx-auto">
               <div className="glass-card rounded-2xl p-6">
-                <h2 className="font-semibold text-lg mb-1">Startup Call Notes</h2>
-                <p className="text-xs text-muted-foreground mb-4">Paste raw notes — we'll structure them.</p>
+                <div className="flex items-start justify-between gap-4 mb-1 flex-wrap">
+                  <div>
+                    <h2 className="font-semibold text-lg">Startup Call Notes</h2>
+                    <p className="text-xs text-muted-foreground">Paste raw notes — or upload a PDF and we'll extract them.</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="application/pdf,.pdf"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) handlePdfUpload(f);
+                        e.target.value = "";
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={pdfStatus.state === "parsing"}
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg glass text-foreground text-xs font-medium hover:bg-foreground/10 transition-colors disabled:opacity-60"
+                    >
+                      {pdfStatus.state === "parsing" ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Upload className="w-3.5 h-3.5" />
+                      )}
+                      {pdfStatus.state === "parsing" ? "Extracting…" : "Upload PDF"}
+                    </button>
+                  </div>
+                </div>
+                {pdfStatus.state !== "idle" && (
+                  <div
+                    className={`mb-3 mt-2 flex items-center gap-2 text-xs rounded-lg px-3 py-2 border ${
+                      pdfStatus.state === "error"
+                        ? "border-[color-mix(in_oklab,var(--risk)_35%,transparent)] text-[var(--risk)] bg-[color-mix(in_oklab,var(--risk)_10%,transparent)]"
+                        : pdfStatus.state === "done"
+                          ? "border-[color-mix(in_oklab,var(--positive)_35%,transparent)] text-[var(--positive)] bg-[color-mix(in_oklab,var(--positive)_10%,transparent)]"
+                          : "border-border text-muted-foreground bg-foreground/[0.03]"
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">{pdfStatus.name}</span>
+                    {pdfStatus.message && <span className="opacity-80">— {pdfStatus.message}</span>}
+                  </div>
+                )}
                 <textarea
                   id="notes-input"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={7}
-                  placeholder="Paste startup call notes here. Include founder background, startup idea, target customers, product, technology, business model, competitors, traction, and fundraising stage…"
-                  className="w-full rounded-xl bg-background/50 border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+                  placeholder="Paste startup call notes here, or upload a PDF above. Include founder background, startup idea, target customers, product, technology, business model, competitors, traction, and fundraising stage…"
+                  className="mt-3 w-full rounded-xl bg-background/50 border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                   {[
@@ -196,9 +265,39 @@ function Index() {
 
             {/* Summary cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <ScoreCard label="Startup Fit" value={`${data.scores.fit}`} suffix="/ 10" accent="emerald" progress={data.scores.fit * 10} icon={<Sparkles className="w-4 h-4" />} />
-              <ScoreCard label="Novelty" value={`${data.scores.novelty}`} suffix="/ 10" accent="cyan" progress={data.scores.novelty * 10} icon={<Zap className="w-4 h-4" />} />
-              <ScoreCard label="Foresight" value={`${data.scores.foresight}`} suffix="/ 10" accent="violet" progress={data.scores.foresight * 10} icon={<TrendingUp className="w-4 h-4" />} />
+              <div className="relative group">
+                <ScoreCard label="Startup Fit" value={`${data.scores.fit}`} suffix="/ 10" accent="emerald" progress={data.scores.fit * 10} icon={<Sparkles className="w-4 h-4" />} />
+                <button
+                  type="button"
+                  onClick={() => downloadText(`${data.startup.name}-fit-score.txt`, fitExplanation(data))}
+                  title="Download reasoning (.txt)"
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Download className="w-3 h-3" /> Reasoning
+                </button>
+              </div>
+              <div className="relative group">
+                <ScoreCard label="Novelty" value={`${data.scores.novelty}`} suffix="/ 10" accent="cyan" progress={data.scores.novelty * 10} icon={<Zap className="w-4 h-4" />} />
+                <button
+                  type="button"
+                  onClick={() => downloadText(`${data.startup.name}-novelty-score.txt`, noveltyExplanation(data))}
+                  title="Download reasoning (.txt)"
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Download className="w-3 h-3" /> Reasoning
+                </button>
+              </div>
+              <div className="relative group">
+                <ScoreCard label="Foresight" value={`${data.scores.foresight}`} suffix="/ 10" accent="violet" progress={data.scores.foresight * 10} icon={<TrendingUp className="w-4 h-4" />} />
+                <button
+                  type="button"
+                  onClick={() => downloadText(`${data.startup.name}-foresight-score.txt`, foresightExplanation(data))}
+                  title="Download reasoning (.txt)"
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Download className="w-3 h-3" /> Reasoning
+                </button>
+              </div>
               <ScoreCard label="CRM Memory" value={`${data.scores.crmMatches}`} suffix="similar startups found" accent="amber" icon={<Database className="w-4 h-4" />} />
             </div>
 
@@ -233,7 +332,7 @@ function Index() {
                   })}
                 </div>
 
-                {tab === "memory" && <MemoryTab data={data.memory} />}
+                {tab === "memory" && <MemoryTab data={data.memory} dataQuality={data.inputs.confidence.dataQuality} />}
                 {tab === "novelty" && <NoveltyTab data={data.novelty} />}
                 {tab === "foresight" && <ForesightTab data={data.foresight} />}
               </div>

@@ -31,6 +31,13 @@ export const mockAnalysis = {
       { name: "Tractable", similarity: 68, reason: "Computer vision claims", decision: "Passed", note: "Different modality" },
       { name: "FlowClaim", similarity: 64, reason: "Workflow automation", decision: "Tracking", note: "Earlier stage, watch closely" },
     ],
+    openSource: [
+      { name: "Lemonade (public)", similarity: 72, reason: "Public InsurTech filings (S-1, 10-K)", decision: "Reference", note: "Benchmark for AI-claims unit economics" },
+      { name: "Root Insurance", similarity: 65, reason: "Crunchbase + SEC disclosures", decision: "Reference", note: "Cautionary tale on CAC scaling" },
+      { name: "Hippo Insurance", similarity: 61, reason: "Public filings, news coverage", decision: "Reference", note: "Pivot to platform model documented" },
+      { name: "Clearcover", similarity: 58, reason: "Press releases, ProductHunt", decision: "Reference", note: "API-first claims approach" },
+      { name: "Wefox (open data)", similarity: 54, reason: "EU public funding records", decision: "Reference", note: "DACH distribution playbook" },
+    ],
     relationship: ["Lena Hartmann", "Marc Weber (Angel)", "Sofia Klein (Partner)", "InsureTech Co. (Portfolio)"],
     crm: {
       found: true,
