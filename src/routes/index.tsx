@@ -17,7 +17,10 @@ import {
   Search,
   Beaker,
   Building2,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -40,12 +43,13 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const { theme, toggle } = useTheme();
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
       {/* NAV */}
       <header className="relative z-20 max-w-7xl mx-auto flex items-center justify-between px-6 py-5">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[var(--foresight,theme(colors.violet.500))] grid place-items-center">
+          <div className="w-8 h-8 rounded-lg grid place-items-center" style={{ background: "var(--gradient-emerald)" }}>
             <Brain className="w-4 h-4 text-primary-foreground" />
           </div>
           <span className="font-semibold tracking-tight">VCForesight</span>
@@ -56,12 +60,22 @@ function Landing() {
           <a href="#features" className="hover:text-foreground transition">Features</a>
           <a href="#how" className="hover:text-foreground transition">How it works</a>
         </nav>
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
-        >
-          Open App <ArrowRight className="w-4 h-4" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggle}
+            aria-label="Toggle theme"
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            className="flex items-center justify-center w-9 h-9 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+          >
+            Open App <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </header>
 
       {/* HERO */}
