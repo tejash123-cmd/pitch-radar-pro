@@ -198,7 +198,7 @@ function Index() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
               <div className="lg:col-span-3 space-y-4">
                 {/* Tabs */}
-                <div className="flex flex-wrap items-center gap-1 p-1 rounded-xl glass-card">
+                <div className="flex flex-wrap items-center justify-center gap-1 p-1 rounded-xl glass-card">
                   {[
                     { k: "memory", label: "VC Memory AI", icon: Brain },
                     { k: "novelty", label: "Novelty Market Analysis", icon: Sparkles },
