@@ -113,10 +113,6 @@ export function NoveltyTab({ data }: { data: AnalysisData["novelty"] }) {
           <KeyValue k="Gross margin" v={data.financial.grossMargin} />
         </div>
       </Panel>
-
-      <Panel title="Final Novelty Insight" icon={<Lightbulb className="w-4 h-4" />} className="lg:col-span-2">
-        <p className="text-sm text-foreground/90 leading-relaxed italic">{data.insight}</p>
-      </Panel>
     </div>
   );
 }
