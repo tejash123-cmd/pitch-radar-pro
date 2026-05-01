@@ -1,4 +1,4 @@
-import { Building2, Users, Network, FileSearch, HelpCircle } from "lucide-react";
+import { Building2, Users, Network, FileSearch } from "lucide-react";
 import { Panel, KeyValue } from "./Panel";
 import { LevelBadge } from "./Badge";
 import type { AnalysisData } from "@/lib/mockData";
@@ -64,18 +64,6 @@ export function MemoryTab({ data }: { data: AnalysisData["memory"] }) {
         </div>
       </Panel>
 
-      <Panel title="Recommended Follow-up Questions" icon={<HelpCircle className="w-4 h-4" />} className="lg:col-span-2">
-        <ol className="space-y-2">
-          {data.questions.map((q, i) => (
-            <li key={i} className="flex gap-3 text-sm text-foreground/90">
-              <span className="shrink-0 w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center">
-                {i + 1}
-              </span>
-              <span>{q}</span>
-            </li>
-          ))}
-        </ol>
-      </Panel>
     </div>
   );
 }
