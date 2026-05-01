@@ -92,7 +92,7 @@ export function ScoreCard({
               </button>
             )}
           </div>
-          </div>
+
 
           {reasoningFull && (
             <div
