@@ -272,7 +272,7 @@ function Index() {
                 accent="emerald"
                 progress={data.scores.fit * 10}
                 icon={<Sparkles className="w-4 h-4" />}
-                reasoning={fitSummary(data)}
+                reasoning="Hover to see full reasoning"
                 reasoningFull={fitExplanation(data)}
                 onDownloadReasoning={() => downloadText(`${data.startup.name}-fit-score.txt`, fitExplanation(data))}
               />
@@ -283,7 +283,7 @@ function Index() {
                 accent="cyan"
                 progress={data.scores.novelty * 10}
                 icon={<Zap className="w-4 h-4" />}
-                reasoning={noveltySummary(data)}
+                reasoning="Hover to see full reasoning"
                 reasoningFull={noveltyExplanation(data)}
                 onDownloadReasoning={() => downloadText(`${data.startup.name}-novelty-score.txt`, noveltyExplanation(data))}
               />
@@ -294,7 +294,7 @@ function Index() {
                 accent="violet"
                 progress={data.scores.foresight * 10}
                 icon={<TrendingUp className="w-4 h-4" />}
-                reasoning={foresightSummary(data)}
+                reasoning="Hover to see full reasoning"
                 reasoningFull={foresightExplanation(data)}
                 onDownloadReasoning={() => downloadText(`${data.startup.name}-foresight-score.txt`, foresightExplanation(data))}
               />

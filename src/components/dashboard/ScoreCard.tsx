@@ -92,7 +92,7 @@ export function ScoreCard({
               </button>
             )}
           </div>
-          <p className="text-xs leading-snug text-foreground/85 line-clamp-3">{reasoning}</p>
+
 
           {reasoningFull && (
             <div
