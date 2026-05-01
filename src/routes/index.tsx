@@ -17,7 +17,10 @@ import {
   Search,
   Beaker,
   Building2,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 export const Route = createFileRoute("/")({
   component: Landing,
