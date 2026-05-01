@@ -332,7 +332,7 @@ function Index() {
                   })}
                 </div>
 
-                {tab === "memory" && <MemoryTab data={data.memory} />}
+                {tab === "memory" && <MemoryTab data={data.memory} dataQuality={data.inputs.confidence.dataQuality} />}
                 {tab === "novelty" && <NoveltyTab data={data.novelty} />}
                 {tab === "foresight" && <ForesightTab data={data.foresight} />}
               </div>
