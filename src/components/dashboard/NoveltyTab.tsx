@@ -31,7 +31,7 @@ export function NoveltyTab({ data }: { data: AnalysisData["novelty"] }) {
         icon={<Swords className="w-4 h-4" />}
         className="lg:col-span-2"
         action={
-          <div className="flex items-center gap-1 p-1 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex items-center gap-1 p-1 rounded-lg bg-foreground/5 border border-border">
             {[5, 10, 15].map((n) => (
               <button
                 key={n}
