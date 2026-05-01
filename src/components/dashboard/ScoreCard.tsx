@@ -92,24 +92,6 @@ export function ScoreCard({
               </button>
             )}
           </div>
-
-
-          {reasoningFull && (
-            <div
-              role="tooltip"
-              className="pointer-events-none absolute left-0 right-0 top-full mt-2 z-30 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200"
-            >
-              <div
-                className="rounded-xl border bg-popover text-popover-foreground shadow-xl p-3 text-xs leading-relaxed max-h-64 overflow-auto whitespace-pre-wrap"
-                style={{ borderColor: "color-mix(in oklab, var(--border) 80%, transparent)" }}
-              >
-                <div className="text-[10px] uppercase tracking-wider mb-1 font-semibold" style={{ color: a.color }}>
-                  Full reasoning
-                </div>
-                {reasoningFull}
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>
