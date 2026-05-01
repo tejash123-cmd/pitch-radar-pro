@@ -57,8 +57,8 @@ export function NoveltyTab({ data }: { data: AnalysisData["novelty"] }) {
               </div>
               <div className="text-[11px] text-muted-foreground mb-2">{c.category} · {c.website}</div>
               <div className="grid grid-cols-1 gap-1 text-xs">
-                <div><span className="text-emerald">+ </span>{c.strength}</div>
-                <div><span className="text-rose">− </span>{c.weakness}</div>
+                <div><span className="text-[var(--positive)]">+ </span>{c.strength}</div>
+                <div><span className="text-[var(--risk)]">− </span>{c.weakness}</div>
                 <div className="text-foreground/70 italic mt-1">vs us: {c.difference}</div>
               </div>
             </div>
