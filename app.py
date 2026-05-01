@@ -7,7 +7,8 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, send_file, make_response
 from flask_cors import CORS
 
-load_dotenv(Path(__file__).resolve().parent / ".env")
+# Make .env authoritative for this app process, even if older shell env vars exist.
+load_dotenv(Path(__file__).resolve().parent / ".env", override=True)
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
