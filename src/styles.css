@@ -170,11 +170,15 @@
   }
 
   .glass-card {
-    background: linear-gradient(135deg, oklch(1 0 0 / 0.04), oklch(1 0 0 / 0.02));
+    background: var(--glass);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-card);
+  }
+
+  .dark .glass-card {
+    background: linear-gradient(135deg, oklch(1 0 0 / 0.04), oklch(1 0 0 / 0.02));
   }
 
   .gradient-text {
