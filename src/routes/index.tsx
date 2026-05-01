@@ -206,7 +206,7 @@ function Index() {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={7}
-                  placeholder="Paste startup call notes here, or upload a PDF above. Include founder background, startup idea, target customers, product, technology, business model, competitors, traction, and fundraising stage…"
+                  placeholder="Granola Notes "
                   className="mt-3 w-full rounded-xl bg-background/50 border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
