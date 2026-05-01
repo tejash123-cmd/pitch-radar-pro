@@ -94,6 +94,24 @@ export function foresightExplanation(data: AnalysisData): string {
   return lines.join("\n");
 }
 
+// Short, human-readable reasoning summaries (1–2 sentences) for inline display.
+export function fitSummary(data: AnalysisData): string {
+  const crm = data.memory.crm.found
+    ? `existing CRM record (${data.memory.crm.stage}, owner ${data.memory.crm.owner})`
+    : "no prior CRM record";
+  return `Founder ${data.memory.profile.founderName} · ${data.memory.profile.businessModel}. ${data.scores.crmMatches} similar startups in memory and ${crm}. Data quality: ${data.inputs.confidence.dataQuality}.`;
+}
+
+export function noveltySummary(data: AnalysisData): string {
+  const top = data.novelty.breakdown.slice(0, 2).map((b) => `${b.label} ${b.level}`).join(", ");
+  const gap = data.novelty.gaps[0] ?? "differentiated positioning";
+  return `${top}. Market: ${data.novelty.saturation}. Gap: ${gap}.`;
+}
+
+export function foresightSummary(data: AnalysisData): string {
+  return `Timing: ${data.foresight.timing}. ${data.foresight.category.current} → ${data.foresight.category.future} (${data.foresight.category.maturity}, ${data.foresight.category.potential} potential).`;
+}
+
 export function downloadText(filename: string, content: string) {
   const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);

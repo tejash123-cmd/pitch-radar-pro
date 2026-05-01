@@ -8,7 +8,7 @@ import { NoveltyTab } from "@/components/dashboard/NoveltyTab";
 import { ForesightTab } from "@/components/dashboard/ForesightTab";
 import { useTheme } from "@/hooks/use-theme";
 import { extractPdfText } from "@/lib/pdfExtract";
-import { fitExplanation, noveltyExplanation, foresightExplanation, downloadText } from "@/lib/scoreExplanations";
+import { fitExplanation, noveltyExplanation, foresightExplanation, fitSummary, noveltySummary, foresightSummary, downloadText } from "@/lib/scoreExplanations";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -264,40 +264,40 @@ function Index() {
             </div>
 
             {/* Summary cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="relative group">
-                <ScoreCard label="Startup Fit" value={`${data.scores.fit}`} suffix="/ 10" accent="emerald" progress={data.scores.fit * 10} icon={<Sparkles className="w-4 h-4" />} />
-                <button
-                  type="button"
-                  onClick={() => downloadText(`${data.startup.name}-fit-score.txt`, fitExplanation(data))}
-                  title="Download reasoning (.txt)"
-                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors px-[8px] mx-0 my-0"
-                >
-                  <Download className="w-3 h-3" /> Reasoning
-                </button>
-              </div>
-              <div className="relative group">
-                <ScoreCard label="Novelty" value={`${data.scores.novelty}`} suffix="/ 10" accent="cyan" progress={data.scores.novelty * 10} icon={<Zap className="w-4 h-4" />} />
-                <button
-                  type="button"
-                  onClick={() => downloadText(`${data.startup.name}-novelty-score.txt`, noveltyExplanation(data))}
-                  title="Download reasoning (.txt)"
-                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors mx-0 my-0"
-                >
-                  <Download className="w-3 h-3" /> Reasoning
-                </button>
-              </div>
-              <div className="relative group">
-                <ScoreCard label="Foresight" value={`${data.scores.foresight}`} suffix="/ 10" accent="violet" progress={data.scores.foresight * 10} icon={<TrendingUp className="w-4 h-4" />} />
-                <button
-                  type="button"
-                  onClick={() => downloadText(`${data.startup.name}-foresight-score.txt`, foresightExplanation(data))}
-                  title="Download reasoning (.txt)"
-                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors mx-0 my-0"
-                >
-                  <Download className="w-3 h-3" /> Reasoning
-                </button>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start">
+              <ScoreCard
+                label="Startup Fit"
+                value={`${data.scores.fit}`}
+                suffix="/ 10"
+                accent="emerald"
+                progress={data.scores.fit * 10}
+                icon={<Sparkles className="w-4 h-4" />}
+                reasoning={fitSummary(data)}
+                reasoningFull={fitExplanation(data)}
+                onDownloadReasoning={() => downloadText(`${data.startup.name}-fit-score.txt`, fitExplanation(data))}
+              />
+              <ScoreCard
+                label="Novelty"
+                value={`${data.scores.novelty}`}
+                suffix="/ 10"
+                accent="cyan"
+                progress={data.scores.novelty * 10}
+                icon={<Zap className="w-4 h-4" />}
+                reasoning={noveltySummary(data)}
+                reasoningFull={noveltyExplanation(data)}
+                onDownloadReasoning={() => downloadText(`${data.startup.name}-novelty-score.txt`, noveltyExplanation(data))}
+              />
+              <ScoreCard
+                label="Foresight"
+                value={`${data.scores.foresight}`}
+                suffix="/ 10"
+                accent="violet"
+                progress={data.scores.foresight * 10}
+                icon={<TrendingUp className="w-4 h-4" />}
+                reasoning={foresightSummary(data)}
+                reasoningFull={foresightExplanation(data)}
+                onDownloadReasoning={() => downloadText(`${data.startup.name}-foresight-score.txt`, foresightExplanation(data))}
+              />
               <ScoreCard label="CRM Memory" value={`${data.scores.crmMatches}`} suffix="similar startups found" accent="amber" icon={<Database className="w-4 h-4" />} />
             </div>
 
