@@ -8,8 +8,12 @@ export type PortfolioMatch = {
   company_id: number;
   company_name: string;
   website?: string | null;
+  domain: string;
   sector: string;
+  product_summary: string;
   overlap_score: number;
+  domain_match: boolean;
+  product_similarity_score: number;
   match_type: "exact" | "strong" | "related";
   shared_keywords: string[];
   rationale: string;
@@ -105,8 +109,10 @@ export type PortfolioCompany = {
   id: number;
   company_name: string;
   website?: string | null;
+  domain: string;
   sector: string;
   country: string;
+  product_summary: string;
   thesis: string;
   notes: string;
   keywords: string[];
