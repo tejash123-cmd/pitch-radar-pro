@@ -64,7 +64,7 @@ export function MemoryTab({ data, dataQuality }: { data: AnalysisData["memory"];
       </Panel>
 
       {/* Side-by-side comparison columns */}
-      <Panel title="Similar Startups Seen Before" subtitle="From VC memory" icon={<Users className="w-4 h-4" />}>
+      <Panel title="Startups in the real world" subtitle="From VC memory" icon={<Users className="w-4 h-4" />}>
         <div className="space-y-2">
           {data.similar.map((s) => (
             <div key={s.name} className="rounded-xl border border-border bg-foreground/[0.025] p-3 hover:bg-foreground/[0.05] transition-colors">

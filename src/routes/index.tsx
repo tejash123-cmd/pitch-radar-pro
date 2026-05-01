@@ -271,7 +271,7 @@ function Index() {
                   type="button"
                   onClick={() => downloadText(`${data.startup.name}-fit-score.txt`, fitExplanation(data))}
                   title="Download reasoning (.txt)"
-                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors px-[8px] mx-[300px] my-[5px]"
                 >
                   <Download className="w-3 h-3" /> Reasoning
                 </button>
@@ -282,7 +282,7 @@ function Index() {
                   type="button"
                   onClick={() => downloadText(`${data.startup.name}-novelty-score.txt`, noveltyExplanation(data))}
                   title="Download reasoning (.txt)"
-                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors mx-[300px] my-[5px]"
                 >
                   <Download className="w-3 h-3" /> Reasoning
                 </button>
@@ -293,7 +293,7 @@ function Index() {
                   type="button"
                   onClick={() => downloadText(`${data.startup.name}-foresight-score.txt`, foresightExplanation(data))}
                   title="Download reasoning (.txt)"
-                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors mx-[300px] my-[5px]"
                 >
                   <Download className="w-3 h-3" /> Reasoning
                 </button>
