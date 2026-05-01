@@ -6,7 +6,6 @@ import { ScoreCard } from "@/components/dashboard/ScoreCard";
 import { MemoryTab } from "@/components/dashboard/MemoryTab";
 import { NoveltyTab } from "@/components/dashboard/NoveltyTab";
 import { ForesightTab } from "@/components/dashboard/ForesightTab";
-import { AnalysisSidebar } from "@/components/dashboard/Sidebar";
 import { useTheme } from "@/hooks/use-theme";
 
 export const Route = createFileRoute("/")({
@@ -203,9 +202,9 @@ function Index() {
               <ScoreCard label="CRM Memory" value={`${data.scores.crmMatches}`} suffix="similar startups found" accent="amber" icon={<Database className="w-4 h-4" />} />
             </div>
 
-            {/* Main grid: 75% / 25% on desktop */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
-              <div className="lg:col-span-3 space-y-4">
+            {/* Main content */}
+            <div className="space-y-4">
+              <div className="space-y-4">
                 {/* Tabs */}
                 <div className="flex flex-wrap items-center justify-center gap-1 p-1 rounded-xl glass-card">
                   {[
@@ -237,10 +236,6 @@ function Index() {
                 {tab === "memory" && <MemoryTab data={data.memory} />}
                 {tab === "novelty" && <NoveltyTab data={data.novelty} />}
                 {tab === "foresight" && <ForesightTab data={data.foresight} />}
-              </div>
-
-              <div className="lg:col-span-1">
-                <AnalysisSidebar data={data.inputs} />
               </div>
             </div>
           </div>
