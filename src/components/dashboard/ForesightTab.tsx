@@ -77,7 +77,7 @@ export function ForesightTab({ data }: { data: AnalysisData["foresight"] }) {
         <ul className="space-y-2">
           {data.risks.map((r, i) => (
             <li key={i} className="flex gap-2 text-sm text-foreground/90">
-              <span className="text-rose shrink-0">▸</span>
+              <span className="text-[var(--risk)] shrink-0">▸</span>
               <span>{r}</span>
             </li>
           ))}
