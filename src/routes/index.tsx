@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Brain, Sparkles, TrendingUp, Database, Loader2, ArrowRight, RotateCcw, Zap, Sun, Moon } from "lucide-react";
+import { useRef, useState } from "react";
+import { Brain, Sparkles, TrendingUp, Database, Loader2, ArrowRight, RotateCcw, Zap, Sun, Moon, Upload, Download, FileText } from "lucide-react";
 import { mockAnalysis } from "@/lib/mockData";
 import { ScoreCard } from "@/components/dashboard/ScoreCard";
 import { MemoryTab } from "@/components/dashboard/MemoryTab";
 import { NoveltyTab } from "@/components/dashboard/NoveltyTab";
 import { ForesightTab } from "@/components/dashboard/ForesightTab";
 import { useTheme } from "@/hooks/use-theme";
+import { extractPdfText } from "@/lib/pdfExtract";
+import { fitExplanation, noveltyExplanation, foresightExplanation, downloadText } from "@/lib/scoreExplanations";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -30,8 +32,30 @@ function Index() {
   const { theme, toggle } = useTheme();
   const [notes, setNotes] = useState("");
   const [form, setForm] = useState({ name: "", industry: "", stage: "", geography: "" });
+  const [pdfStatus, setPdfStatus] = useState<{ name: string; state: "idle" | "parsing" | "done" | "error"; message?: string }>({ name: "", state: "idle" });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const data = mockAnalysis;
+
+  const handlePdfUpload = async (file: File) => {
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      setPdfStatus({ name: file.name, state: "error", message: "Please upload a PDF file." });
+      return;
+    }
+    setPdfStatus({ name: file.name, state: "parsing" });
+    try {
+      const text = await extractPdfText(file);
+      if (!text) {
+        setPdfStatus({ name: file.name, state: "error", message: "No selectable text found (scanned PDF?)." });
+        return;
+      }
+      setNotes((prev) => (prev ? `${prev}\n\n--- From ${file.name} ---\n${text}` : text));
+      setPdfStatus({ name: file.name, state: "done", message: `Extracted ${text.length.toLocaleString()} characters` });
+      setTimeout(() => document.getElementById("notes-input")?.focus(), 50);
+    } catch (e) {
+      setPdfStatus({ name: file.name, state: "error", message: e instanceof Error ? e.message : "Failed to read PDF" });
+    }
+  };
 
   const analyze = () => {
     setView("loading");
