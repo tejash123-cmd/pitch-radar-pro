@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
       { title: "AI Investment Intelligence Engine — VC Memory, Novelty & Foresight" },
       {
         name: "description",
-        content: "Turn startup calls into VC memory, market novelty signals, and future investment foresight. Built for venture capital teams.",
+        content: "Turn startup notes into VC memory, market novelty insights, and investment foresight. Built for venture capital teams.",
       },
     ],
   }),
@@ -104,7 +104,7 @@ function Index() {
                 <span className="text-foreground">Intelligence Engine</span>
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-                Turn startup calls into VC memory, market novelty signals, and future investment foresight.
+                Turn startup notes into VC memory, market novelty insights, and investment foresight.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-2 mb-7">
                 {["Granola Notes", "Affinity CRM", "Web Research"].map((c) => (
