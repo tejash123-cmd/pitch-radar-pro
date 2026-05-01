@@ -4,24 +4,27 @@ export type Theme = "light" | "dark";
 
 const STORAGE_KEY = "aii-theme";
 
-function getInitial(): Theme {
-  if (typeof window === "undefined") return "dark";
-  const stored = window.localStorage.getItem(STORAGE_KEY) as Theme | null;
-  if (stored === "light" || stored === "dark") return stored;
-  return "dark";
-}
-
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(getInitial);
+  // Always start with "dark" to match SSR output, then sync from localStorage on mount.
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY) as Theme | null;
+    if (stored === "light" || stored === "dark") setTheme(stored);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const root = document.documentElement;
     root.classList.toggle("dark", theme === "dark");
     window.localStorage.setItem(STORAGE_KEY, theme);
-  }, [theme]);
+  }, [theme, mounted]);
 
   return {
     theme,
+    mounted,
     setTheme,
     toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")),
   };
