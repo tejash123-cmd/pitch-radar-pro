@@ -151,7 +151,7 @@ export function ForesightTab({ data }: { data: AnalysisData }) {
             {(Object.keys(trajectoryStats).length > 0 || Object.keys(trajectorySynth).length > 0 || papers.length > 0) && (
               <div className="mt-6 space-y-4">
                 <h4 className="text-sm font-semibold">Technology trajectory cues</h4>
-                {trajectorySynth.current_trajectory_hypothesis && (
+                {Boolean(trajectorySynth.current_trajectory_hypothesis) && (
                   <div className="text-xs text-muted-foreground rounded-lg border p-3 bg-foreground/[0.02]">
                     {String(trajectorySynth.current_trajectory_hypothesis)}
                   </div>
